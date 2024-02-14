@@ -6,16 +6,22 @@
 //
 
 import SwiftUI
+import RealityKitContent
 
 @main
 struct PhotoFinderApp: App {
+    
+    @State private var model = ViewModel()
+    
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        WindowGroup(id: "launcher") {
+            StarterView()
+                .environmentObject(model)
         }
 
-        ImmersiveSpace(id: "ImmersiveSpace") {
+        ImmersiveSpace(id: Module.active.name) {
             ImmersiveView()
-        }
+                .environmentObject(model)
+        }.immersionStyle(selection: .constant(.mixed), in: .mixed)
     }
 }
