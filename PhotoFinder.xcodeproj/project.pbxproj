@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		FA5210662B7AD0B300F559A0 /* WindowTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5210652B7AD0B300F559A0 /* WindowTracker.swift */; };
+		FA5D8C7B2B7D536D00A6CA29 /* DebuggingUIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5D8C7A2B7D536D00A6CA29 /* DebuggingUIImage.swift */; };
+		FA5D8C7D2B7D575400A6CA29 /* ImagePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5D8C7C2B7D575400A6CA29 /* ImagePreview.swift */; };
 		FAF9AB312B7952180048E5A9 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = FAF9AB302B7952180048E5A9 /* RealityKitContent */; };
 		FAF9AB332B7952180048E5A9 /* PhotoFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB322B7952180048E5A9 /* PhotoFinderApp.swift */; };
 		FAF9AB372B7952180048E5A9 /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB362B7952180048E5A9 /* ImmersiveView.swift */; };
@@ -36,6 +38,8 @@
 
 /* Begin PBXFileReference section */
 		FA5210652B7AD0B300F559A0 /* WindowTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowTracker.swift; sourceTree = "<group>"; };
+		FA5D8C7A2B7D536D00A6CA29 /* DebuggingUIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggingUIImage.swift; sourceTree = "<group>"; };
+		FA5D8C7C2B7D575400A6CA29 /* ImagePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreview.swift; sourceTree = "<group>"; };
 		FAF9AB2B2B7952180048E5A9 /* PhotoFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAF9AB2F2B7952180048E5A9 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		FAF9AB322B7952180048E5A9 /* PhotoFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFinderApp.swift; sourceTree = "<group>"; };
@@ -139,6 +143,7 @@
 				FAF9AB512B7953CE0048E5A9 /* ViewModel.swift */,
 				FAF9AB532B7953DB0048E5A9 /* Module.swift */,
 				FAF9AB942B7AA7910048E5A9 /* FetchPhotos.swift */,
+				FA5D8C7A2B7D536D00A6CA29 /* DebuggingUIImage.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -155,6 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				FAF9AB592B79819E0048E5A9 /* PreviewView.swift */,
+				FA5D8C7C2B7D575400A6CA29 /* ImagePreview.swift */,
 			);
 			path = PreviewView;
 			sourceTree = "<group>";
@@ -309,12 +315,14 @@
 				FAF9AB5D2B79D1940048E5A9 /* ImmersiveViewToggle.swift in Sources */,
 				FAF9AB572B7956420048E5A9 /* StarterView.swift in Sources */,
 				FAF9AB932B7A86CB0048E5A9 /* PictureEntity.swift in Sources */,
+				FA5D8C7D2B7D575400A6CA29 /* ImagePreview.swift in Sources */,
 				FAF9AB522B7953CE0048E5A9 /* ViewModel.swift in Sources */,
 				FAF9AB542B7953DB0048E5A9 /* Module.swift in Sources */,
 				FAF9AB372B7952180048E5A9 /* ImmersiveView.swift in Sources */,
 				FAF9AB912B7A86B90048E5A9 /* PictureManager.swift in Sources */,
 				FAF9AB5A2B79819E0048E5A9 /* PreviewView.swift in Sources */,
 				FA5210662B7AD0B300F559A0 /* WindowTracker.swift in Sources */,
+				FA5D8C7B2B7D536D00A6CA29 /* DebuggingUIImage.swift in Sources */,
 				FAF9AB952B7AA7910048E5A9 /* FetchPhotos.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -33,6 +33,14 @@ extension ViewModel {
 
     // MARK: - Fetch Photos
     public func fetchPhotos() {
+        if self.DEBUG_MODE {
+            var testImages: [UIImage] = []
+            for i in 0..<10 {
+                testImages.append(createSolidColorImage(color: .red, size: CGSize(width: 100, height: 100)))
+            }
+            self.photos = testImages
+            return
+        }
         // Fetch the default camera roll album
         let cameraRollAlbum = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil).firstObject
 

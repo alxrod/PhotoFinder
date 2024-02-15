@@ -17,7 +17,6 @@ struct ImmersiveView: View {
         
         RealityView { content in
             // Add the initial RealityKit content
-            print("Content Getting added!")
             
 //            let cubeSize = SIMD3<Float>(0.2, 0.2, 0.2) // Smaller size for visibility
 //            let material = SimpleMaterial(color: .red, isMetallic: false)
@@ -28,7 +27,7 @@ struct ImmersiveView: View {
             // Create an anchor and add the cube to it
             let anchor = AnchorEntity(world: .zero)
             anchor.addChild(model.pictureManager.rootEntity)
-            content.add(anchor)
+            content.add(model.pictureManager.rootEntity)
             
         }
     }

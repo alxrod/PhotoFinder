@@ -12,6 +12,8 @@ import RealityKit
 class ViewModel: ObservableObject {
     
     // MARK: - Properties
+    var DEBUG_MODE: Bool = true
+    
     var titleText: String = "Photo Gallery"
     @Published var photos: [UIImage] = []
     @Published var isShowingImmersive: Bool = false
