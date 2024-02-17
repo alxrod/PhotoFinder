@@ -29,7 +29,17 @@ struct ImmersiveView: View {
             anchor.addChild(model.pictureManager.rootEntity)
             content.add(model.pictureManager.rootEntity)
             
+            Task {
+//                 Run the ARKit session after the user opens the immersive space.
+                await model.pictureManager.deviceManager.runARKitSession(arkitSession: model.arkitSession)
+            }
+            
         }
+        .enableMovingEntity()
+        .task {
+            await model.pictureManager.deviceManager.processDeviceAnchorUpdates()
+        }
+        
     }
 }
 

@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FA5210662B7AD0B300F559A0 /* WindowTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5210652B7AD0B300F559A0 /* WindowTracker.swift */; };
+		FA4335712B7EA94900732F1E /* EntityMovementViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4335702B7EA94900732F1E /* EntityMovementViewModifier.swift */; };
+		FA4335742B7FA3C000732F1E /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4335732B7FA3C000732F1E /* DeviceManager.swift */; };
+		FA4335772B7FC87600732F1E /* GeometryUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4335762B7FC87600732F1E /* GeometryUtilities.swift */; };
 		FA5D8C7B2B7D536D00A6CA29 /* DebuggingUIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5D8C7A2B7D536D00A6CA29 /* DebuggingUIImage.swift */; };
-		FA5D8C7D2B7D575400A6CA29 /* ImagePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5D8C7C2B7D575400A6CA29 /* ImagePreview.swift */; };
+		FA5D8C7F2B7E8F5200A6CA29 /* ImagePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5D8C7E2B7E8F5200A6CA29 /* ImagePreview.swift */; };
 		FAF9AB312B7952180048E5A9 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = FAF9AB302B7952180048E5A9 /* RealityKitContent */; };
 		FAF9AB332B7952180048E5A9 /* PhotoFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB322B7952180048E5A9 /* PhotoFinderApp.swift */; };
 		FAF9AB372B7952180048E5A9 /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB362B7952180048E5A9 /* ImmersiveView.swift */; };
@@ -37,9 +39,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		FA5210652B7AD0B300F559A0 /* WindowTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowTracker.swift; sourceTree = "<group>"; };
+		FA4335702B7EA94900732F1E /* EntityMovementViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityMovementViewModifier.swift; sourceTree = "<group>"; };
+		FA4335732B7FA3C000732F1E /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
+		FA4335762B7FC87600732F1E /* GeometryUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryUtilities.swift; sourceTree = "<group>"; };
 		FA5D8C7A2B7D536D00A6CA29 /* DebuggingUIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggingUIImage.swift; sourceTree = "<group>"; };
-		FA5D8C7C2B7D575400A6CA29 /* ImagePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreview.swift; sourceTree = "<group>"; };
+		FA5D8C7E2B7E8F5200A6CA29 /* ImagePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreview.swift; sourceTree = "<group>"; };
 		FAF9AB2B2B7952180048E5A9 /* PhotoFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAF9AB2F2B7952180048E5A9 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		FAF9AB322B7952180048E5A9 /* PhotoFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFinderApp.swift; sourceTree = "<group>"; };
@@ -78,6 +82,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FA43356F2B7EA92700732F1E /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				FA4335702B7EA94900732F1E /* EntityMovementViewModifier.swift */,
+			);
+			path = Modifiers;
+			sourceTree = "<group>";
+		};
+		FA4335722B7FA3B200732F1E /* DeviceManager */ = {
+			isa = PBXGroup;
+			children = (
+				FA4335732B7FA3C000732F1E /* DeviceManager.swift */,
+			);
+			path = DeviceManager;
+			sourceTree = "<group>";
+		};
+		FA4335752B7FC86900732F1E /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FA4335762B7FC87600732F1E /* GeometryUtilities.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		FAF9AB222B7952180048E5A9 = {
 			isa = PBXGroup;
 			children = (
@@ -100,6 +128,7 @@
 		FAF9AB2D2B7952180048E5A9 /* PhotoFinder */ = {
 			isa = PBXGroup;
 			children = (
+				FA4335752B7FC86900732F1E /* Utilities */,
 				FAF9AB8E2B7A86A40048E5A9 /* State */,
 				FAF9AB8C2B7A71910048E5A9 /* Entities */,
 				FAF9AB5B2B79D0C10048E5A9 /* ImmersiveView */,
@@ -160,7 +189,7 @@
 			isa = PBXGroup;
 			children = (
 				FAF9AB592B79819E0048E5A9 /* PreviewView.swift */,
-				FA5D8C7C2B7D575400A6CA29 /* ImagePreview.swift */,
+				FA5D8C7E2B7E8F5200A6CA29 /* ImagePreview.swift */,
 			);
 			path = PreviewView;
 			sourceTree = "<group>";
@@ -168,9 +197,9 @@
 		FAF9AB5B2B79D0C10048E5A9 /* ImmersiveView */ = {
 			isa = PBXGroup;
 			children = (
+				FA43356F2B7EA92700732F1E /* Modifiers */,
 				FAF9AB362B7952180048E5A9 /* ImmersiveView.swift */,
 				FAF9AB5C2B79D1940048E5A9 /* ImmersiveViewToggle.swift */,
-				FA5210652B7AD0B300F559A0 /* WindowTracker.swift */,
 			);
 			path = ImmersiveView;
 			sourceTree = "<group>";
@@ -194,6 +223,7 @@
 		FAF9AB8E2B7A86A40048E5A9 /* State */ = {
 			isa = PBXGroup;
 			children = (
+				FA4335722B7FA3B200732F1E /* DeviceManager */,
 				FAF9AB8F2B7A86AC0048E5A9 /* PictureManager */,
 				FAF9AB502B7953BA0048E5A9 /* ViewModel */,
 			);
@@ -315,13 +345,15 @@
 				FAF9AB5D2B79D1940048E5A9 /* ImmersiveViewToggle.swift in Sources */,
 				FAF9AB572B7956420048E5A9 /* StarterView.swift in Sources */,
 				FAF9AB932B7A86CB0048E5A9 /* PictureEntity.swift in Sources */,
-				FA5D8C7D2B7D575400A6CA29 /* ImagePreview.swift in Sources */,
+				FA4335772B7FC87600732F1E /* GeometryUtilities.swift in Sources */,
 				FAF9AB522B7953CE0048E5A9 /* ViewModel.swift in Sources */,
 				FAF9AB542B7953DB0048E5A9 /* Module.swift in Sources */,
 				FAF9AB372B7952180048E5A9 /* ImmersiveView.swift in Sources */,
+				FA4335742B7FA3C000732F1E /* DeviceManager.swift in Sources */,
 				FAF9AB912B7A86B90048E5A9 /* PictureManager.swift in Sources */,
 				FAF9AB5A2B79819E0048E5A9 /* PreviewView.swift in Sources */,
-				FA5210662B7AD0B300F559A0 /* WindowTracker.swift in Sources */,
+				FA5D8C7F2B7E8F5200A6CA29 /* ImagePreview.swift in Sources */,
+				FA4335712B7EA94900732F1E /* EntityMovementViewModifier.swift in Sources */,
 				FA5D8C7B2B7D536D00A6CA29 /* DebuggingUIImage.swift in Sources */,
 				FAF9AB952B7AA7910048E5A9 /* FetchPhotos.swift in Sources */,
 			);

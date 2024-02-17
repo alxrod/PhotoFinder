@@ -9,6 +9,7 @@ import SwiftUI
 import RealityKitContent
 
 @main
+@MainActor
 struct PhotoFinderApp: App {
     
     @State private var model = ViewModel()

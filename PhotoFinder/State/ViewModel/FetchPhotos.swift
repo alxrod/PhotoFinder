@@ -34,9 +34,9 @@ extension ViewModel {
     // MARK: - Fetch Photos
     public func fetchPhotos() {
         if self.DEBUG_MODE {
-            var testImages: [UIImage] = []
+            var testImages: [NamedImage] = []
             for i in 0..<10 {
-                testImages.append(createSolidColorImage(color: .red, size: CGSize(width: 100, height: 100)))
+                testImages.append(NamedImage(image: createSolidColorImage(color: .red, size: CGSize(width: 100, height: 100))))
             }
             self.photos = testImages
             return
@@ -53,7 +53,11 @@ extension ViewModel {
 
             convertPHAssetToUIImage(assets: fetchResult) { images in
                 DispatchQueue.main.async {
-                    self.photos = images
+                    var outImages: [NamedImage] = []
+                    for img in images {
+                        outImages.append(NamedImage(image: img))
+                    }
+                    self.photos = outImages
                 }
             }
         }
@@ -86,5 +90,6 @@ extension ViewModel {
             completion(images)
         }
     }
+
 
 }

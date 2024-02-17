@@ -2,39 +2,96 @@
 //  ImagePreview.swift
 //  PhotoFinder
 //
-//  Created by Alex Rodriguez on 2/14/24.
+//  Created by Alex Rodriguez on 2/15/24.
 //
 
+import Foundation
 import SwiftUI
 import RealityKit
-
+import simd
 
 struct ImagePreview: View {
-    var image: UIImage
-    var imageSize: CGFloat
+    @EnvironmentObject private var model: ViewModel
+    @Environment(\.physicalMetrics) var physicalMetrics
     
-    @State private var imageEntity: PictureEntity?
-    @State private var cubeEntity: ModelEntity?
+    public var image: NamedImage
+    public var imageSize: CGFloat
     
+    @State private var added: Bool = false
+    @State private var removedFromView: Bool = false
     
     var body: some View {
-        RealityView { content in
-//            let img = PictureEntity(image: image, planePosition: SIMD3<Float>(0.0, 0.0, 0.0), planeSize: SIMD2(0.1, 0.1))
-//            content.add(img)
-//            self.imageEntity = img
-            let cubeMesh = MeshResource.generateBox(size: 0.05) // Adjust the size as needed
-            let cubeMaterial = SimpleMaterial(color: .blue, isMetallic: false) // Adjust color and material properties as needed
-            let cube = ModelEntity(mesh: cubeMesh, materials: [cubeMaterial])
-            
-            cube.components.set(InputTargetComponent())
-            cube.generateCollisionShapes(recursive: true)
-            
-            cube.position = SIMD3<Float>(0.0, 0.0, 0.0) // Position the cube at the origin
-            
-            content.add(cube) // Add the cube to the content
-            self.cubeEntity = cube
+        GeometryReader3D { proxy in
+            ZStack {
+                Image(uiImage: image.image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: imageSize, height: imageSize)
+                    .cornerRadius(8)
+                    .gesture(DragGesture().onChanged { value in
+                        if removedFromView {
+                            return
+                        }
+                        if let transform = proxy.transform(in: .named(Module.active.name)) {
+                            let point = SIMD4<Double>(
+                                value.location3D.x,
+                                value.location3D.y,
+                                value.location3D.z,
+                                1
+                            )
+                            // Apply the affine transformation
+                            let tP = transform.matrix * point
+                            
+                            // Extract the x, y, z components from the transformed point
+                            
+                            var outPoint = SIMD3<Float>(physicalMetrics.convert(Point3D(
+                                x: tP.x,
+                                y: tP.y,
+                                z: tP.z), to: .meters))
+                            
+                            outPoint.x = outPoint.x / Float(transform.scale.width)
+                            outPoint.y = outPoint.y / Float(-1*transform.scale.height)
+                            outPoint.z = outPoint.z / Float(transform.scale.depth)
+                            
+                            if added {
+                                model.pictureManager.updatePictureLoc(name: image.name, to: outPoint)
+                            } else {
+                                model.pictureManager.addPicture(
+                                    from: image,
+                                    pos: outPoint,
+                                    rot: nil
+                                )
+                                added = true
+                            }
+
+                        }
+                    }.onEnded { value in
+                        removedFromView = true
+                    })
+            }
         }
-//        .background(.red)
     }
 }
 
+
+
+//                                            .onTapGesture {
+//                                                print(proxy.frame(in: .local))
+//                                                print(proxy.frame(in: .named(Module.active.name)))
+//                                                print(proxy.size)
+//                                                if let transform = proxy.transform(in: .named(Module.active.name)) {
+//                                                    print("Converted coords to \(transform.scale) \(transform.translation) \(transform.rotation)")
+//
+//                                                    let phys_trans = physicalMetrics.convert(transform.translation, to: .meters)
+//                                                    let translation = SIMD3<Float>(
+//                                                        Float(phys_trans.x / transform.scale.width),
+//                                                        Float(phys_trans.y / (-1*transform.scale.height)),
+//                                                        Float(phys_trans.z / transform.scale.depth))
+//
+//                                                    model.pictureManager.addPicture(
+//                                                        from: model.photos[index],
+//                                                        pos: translation,
+//                                                        rot: transform.rotation != nil ? simd_quatf(transform.rotation!) : nil
+//                                                    )
+//                                                }
+//                                            }
