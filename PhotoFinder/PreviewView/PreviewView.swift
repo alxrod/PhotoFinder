@@ -25,9 +25,11 @@ struct PreviewView: View {
 
                     LazyVGrid(columns: columns) {
                         ForEach(model.photos.indices, id: \.self) { index in
-                            VStack {
-                                ImagePreview(image: model.photos[index], imageSize: imageSize).environmentObject(model)
-                            }.frame(width: imageSize, height: imageSize)
+                            if !model.photos[index].inImmersiveSpace {
+                                VStack {
+                                    ImagePreview(imageIndex: index, imageSize: imageSize).environmentObject(model)
+                                }.frame(width: imageSize, height: imageSize)
+                            }
                         }
                     }
 //                }
@@ -36,7 +38,7 @@ struct PreviewView: View {
             .onAppear {
                 model.checkPhotoLibraryPermission()
                 Task {
-                    model.fetchPhotos()
+                    model.fetchPhotos(pageNumber: 0, pageSize: model.fetchSize)
                 }
             }
         }

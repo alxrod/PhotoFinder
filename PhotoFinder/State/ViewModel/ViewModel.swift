@@ -6,21 +6,26 @@
 //
 
 import SwiftUI
-import Photos
+import Photos   
 import RealityKit
 import ARKit
 
 class ViewModel: ObservableObject {
     
     // MARK: - Properties
-    var DEBUG_MODE: Bool = true
+    var DEBUG_MODE: Bool = false
     
     var titleText: String = "Photo Gallery"
+    
     @Published var photos: [NamedImage] = []
+    @Published var photosInView = 0
+    
     @Published var isShowingImmersive: Bool = false
     
     // MARK: - Photo Fetching Properties
     private var fetchResult: PHFetchResult<PHAsset>!
+    public var fetchPage: Int = 0
+    public var fetchSize: Int = 30
     
     // MARK: - Immersive Photo Display
     @Published var pictureManager: PictureManager
@@ -92,4 +97,5 @@ class ViewModel: ObservableObject {
 struct NamedImage {
     public var image: UIImage
     public var name = UUID().uuidString
+    public var inImmersiveSpace = false
 }

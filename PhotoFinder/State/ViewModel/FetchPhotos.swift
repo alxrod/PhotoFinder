@@ -32,37 +32,84 @@ extension ViewModel {
     }
 
     // MARK: - Fetch Photos
-    public func fetchPhotos() {
+    func fetchPhotos(pageNumber: Int, pageSize: Int) {
         if self.DEBUG_MODE {
             var testImages: [NamedImage] = []
-            for i in 0..<10 {
-                testImages.append(NamedImage(image: createSolidColorImage(color: .red, size: CGSize(width: 100, height: 100))))
+            for _ in 0..<pageSize {
+                testImages.append(NamedImage(image: createSolidColorImage(size: CGSize(width: 100, height: 100))))
             }
-            self.photos = testImages
+            self.photos += testImages
+            self.photosInView += testImages.count
             return
         }
-        // Fetch the default camera roll album
-        let cameraRollAlbum = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil).firstObject
+
+        guard let cameraRollAlbum = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil).firstObject else { return }
 
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        fetchOptions.fetchLimit = 10 // Adjust as needed
+        let fetchResult = PHAsset.fetchAssets(in: cameraRollAlbum, options: fetchOptions)
 
-        if let album = cameraRollAlbum {
-            let fetchResult = PHAsset.fetchAssets(in: album, options: fetchOptions)
+        let start = pageNumber * pageSize
+        let end = start + pageSize
+        let count = fetchResult.count
+        if start >= count {
+            // Handle case where requested page is out of bounds
+            return
+        }
 
-            convertPHAssetToUIImage(assets: fetchResult) { images in
-                DispatchQueue.main.async {
-                    var outImages: [NamedImage] = []
-                    for img in images {
-                        outImages.append(NamedImage(image: img))
+        // Prepare a block to convert PHAsset to UIImage
+        func convertAssetsToUIImages(assets: [PHAsset], completion: @escaping ([UIImage]) -> Void) {
+            var images: [UIImage] = []
+            var requestCount = 0 // Keep track of the number of completed requests
+            let options = PHImageRequestOptions()
+            options.isSynchronous = false // Set to false to allow asynchronous requests
+            options.deliveryMode = .highQualityFormat // Request high-quality images
+            let manager = PHImageManager.default()
+
+            for asset in assets {
+                manager.requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFill, options: options) { (result, info) in
+                    DispatchQueue.main.async {
+                        if let image = result {
+                            images.append(image)
+                        }
+                        requestCount += 1
+                        if requestCount == assets.count {
+                            completion(images) // Call completion handler once all requests are completed
+                        }
                     }
-                    self.photos = outImages
                 }
+            }
+        }
+
+        // Slice the fetchResult to get only the assets for the current page
+        var assetsToFetch: [PHAsset] = []
+        fetchResult.enumerateObjects { asset, index, stop in
+            if index >= start && index < min(end, count) {
+                assetsToFetch.append(asset)
+            }
+        }
+        
+
+        // Convert the sliced PHAssets to UIImages
+        convertAssetsToUIImages(assets: assetsToFetch) { images in
+            DispatchQueue.main.async {
+                let outImages = images.map { NamedImage(image: $0) }
+                print("Out images of size \(outImages.count)")
+                self.photosInView += outImages.count
+                self.photos += outImages
             }
         }
     }
 
+    public func markPhotoInSpace(_ imageIndex: Int) {
+        if imageIndex > self.photos.count || imageIndex < 0 { return }
+        self.photos[imageIndex].inImmersiveSpace = true
+        self.photosInView -= 1
+        if photosInView < self.fetchSize {
+            self.fetchPage += 1
+            self.fetchPhotos(pageNumber: self.fetchPage, pageSize: self.fetchSize)
+        }
+    }
     
     // MARK: - Helper Method to Convert PHAsset to UIImage
     private func convertPHAssetToUIImage(assets: PHFetchResult<PHAsset>, completion: @escaping ([UIImage]) -> Void) {

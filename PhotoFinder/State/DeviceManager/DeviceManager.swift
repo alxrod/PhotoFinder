@@ -53,7 +53,6 @@ class DeviceManager {
     private func queryAndProcessLatestDeviceAnchor() async {
         // Device anchors are only available when the provider is running.
         guard worldTracking.state == .running else { return }
-        print("MADE IT HERE")
         
         let deviceAnchor = worldTracking.queryDeviceAnchor(atTimestamp: CACurrentMediaTime())
 
@@ -65,7 +64,6 @@ class DeviceManager {
     
     @MainActor
     private func updatePlacementLocation(_ deviceAnchor: DeviceAnchor) async {
-        print(deviceAnchor.originFromAnchorTransform)
         deviceLocation.transform = Transform(matrix: deviceAnchor.originFromAnchorTransform)
 //      Do work to calculate looking direction in future
     }

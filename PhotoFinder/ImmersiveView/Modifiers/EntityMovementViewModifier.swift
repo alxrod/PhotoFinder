@@ -23,17 +23,6 @@ struct EntityMovementViewModifier: ViewModifier {
                     .targetedToAnyEntity()
                     .onChanged { value in
                         
-                        //                       REPLACE THIS CODE WITH TRANSLATING THE DRAG GESTURE MOVEMENT TO MOVING THE ENTITY's location
-//                        let entity = value.entity
-//                        let convertedTranslation = value.convert(value.translation3D, from: .local, to: entity.parent!)
-                        
-                        
-//                        if sourceTransform == nil {
-//                            sourceTransform = entity.transform
-//                        }
-//                        entity.transform.translation = sourceTransform!.translation + SIMD3<Float>(convertedTranslation)
-//                        
-                        
                         var traverser = value.entity
                         var pictureEntity: PictureEntity?
                         var scale_factor = traverser.scale
@@ -52,30 +41,11 @@ struct EntityMovementViewModifier: ViewModifier {
                         if sourceTransform == nil {
                             sourceTransform = pictureEntity.transform
                         }
-                            
-//                        let trans = Transform(
-//                            scale: pictureEntity.transform.scale,
-//                            rotation: pictureEntity.transform.rotation,
-//                            translation: sourceTransform!.translation + SIMD3<Float>(convertedTranslation))
-                        
-//
-//                        let entToWorld = entity.convert(transform: trans, to: nil)
-//                        let picTrans = pictureEntity.convert(transform: entToWorld, from: nil)
-//                        pictureEntity.transform = trans
-                        
-//                      vs.
-                        
-//                        entity.transform = trans
-                        
-                        
                         
                         model.pictureManager.updateSpecPictureLoc(
                             pictureEntity: pictureEntity,
                             newPos: sourceTransform!.translation + SIMD3<Float>(convertedTranslation))
-//
-                        
-//                        let newOrientation = model.pictureManager.rotationToFaceDevice(fromPosition: entity.transform.translation, curQuat: entity.transform.rotation)
-//                        entity.transform
+
                     }
                     .onEnded { _ in
                         sourceTransform = nil

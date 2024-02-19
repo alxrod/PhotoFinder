@@ -14,20 +14,24 @@ struct ImagePreview: View {
     @EnvironmentObject private var model: ViewModel
     @Environment(\.physicalMetrics) var physicalMetrics
     
-    public var image: NamedImage
+    public var imageIndex: Int
     public var imageSize: CGFloat
+    public var dragInProgress: Bool = false
     
     @State private var added: Bool = false
     @State private var removedFromView: Bool = false
     
+    private let inFrontAdjustment: Double = 100 //To make sure the pictures come out ahead of the window itself
+    
     var body: some View {
         GeometryReader3D { proxy in
             ZStack {
-                Image(uiImage: image.image)
+                Image(uiImage: model.photos[imageIndex].image)
                     .resizable()
                     .scaledToFill()
                     .frame(width: imageSize, height: imageSize)
                     .cornerRadius(8)
+                    .opacity(added ? 0.5 : 1)
                     .gesture(DragGesture().onChanged { value in
                         if removedFromView {
                             return
@@ -36,7 +40,7 @@ struct ImagePreview: View {
                             let point = SIMD4<Double>(
                                 value.location3D.x,
                                 value.location3D.y,
-                                value.location3D.z,
+                                value.location3D.z+inFrontAdjustment,
                                 1
                             )
                             // Apply the affine transformation
@@ -54,10 +58,10 @@ struct ImagePreview: View {
                             outPoint.z = outPoint.z / Float(transform.scale.depth)
                             
                             if added {
-                                model.pictureManager.updatePictureLoc(name: image.name, to: outPoint)
+                                model.pictureManager.updatePictureLoc(name: model.photos[imageIndex].name, to: outPoint)
                             } else {
                                 model.pictureManager.addPicture(
-                                    from: image,
+                                    from: model.photos[imageIndex],
                                     pos: outPoint,
                                     rot: nil
                                 )
@@ -67,6 +71,7 @@ struct ImagePreview: View {
                         }
                     }.onEnded { value in
                         removedFromView = true
+                        model.markPhotoInSpace(imageIndex)
                     })
             }
         }

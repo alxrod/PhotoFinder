@@ -50,17 +50,8 @@ class PictureEntity: Entity, HasAnchoring {
                 planeEntity.components.set(InputTargetComponent())
                 self.addChild(planeEntity)
             }
-//            
-            
-////            Debugging Method:
-//            let cubeSize = SIMD3(planeSize.x, planeSize.x, planeSize.x)
-//            let material = SimpleMaterial(color: .gray, isMetallic: false)
-//            let cubeMesh = MeshResource.generateBox(size: cubeSize)
-//            planeEntity = ModelEntity(mesh: cubeMesh, materials: [material])
-//            rotator.addChild(planeEntity!)
-            
+
         }
-//        rotator.position = SIMD3<Float>(0, 1, -2)
         
         self.position = pos
         if let rot = rot {
