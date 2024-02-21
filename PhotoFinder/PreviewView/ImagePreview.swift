@@ -58,7 +58,8 @@ struct ImagePreview: View {
                             outPoint.z = outPoint.z / Float(transform.scale.depth)
                             
                             if added {
-                                model.pictureManager.updatePictureLoc(name: model.photos[imageIndex].name, to: outPoint)
+                                guard let picEntity = model.pictureManager.findPictureEntity(name: model.photos[imageIndex].name) else { return }
+                                model.pictureManager.updateLoc(entity: picEntity, newPos: outPoint)
                             } else {
                                 model.pictureManager.addPicture(
                                     from: model.photos[imageIndex],
@@ -72,6 +73,8 @@ struct ImagePreview: View {
                     }.onEnded { value in
                         removedFromView = true
                         model.markPhotoInSpace(imageIndex)
+                        guard let picEntity = model.pictureManager.findPictureEntity(name: model.photos[imageIndex].name) else { return }
+                        model.pictureManager.checkPictureCollisions(pictureEntity: picEntity)
                     })
             }
         }

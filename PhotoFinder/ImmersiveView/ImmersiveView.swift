@@ -35,7 +35,9 @@ struct ImmersiveView: View {
             }
             
         }
+//        .enableZoomingEntity()
         .enableMovingEntity()
+        
         .task {
             await model.pictureManager.deviceManager.processDeviceAnchorUpdates()
         }

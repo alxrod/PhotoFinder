@@ -13,7 +13,7 @@ import ARKit
 class ViewModel: ObservableObject {
     
     // MARK: - Properties
-    var DEBUG_MODE: Bool = false
+    var DEBUG_MODE: Bool = true
     
     var titleText: String = "Photo Gallery"
     

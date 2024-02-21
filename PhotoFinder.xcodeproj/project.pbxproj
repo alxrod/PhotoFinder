@@ -10,6 +10,9 @@
 		FA4335712B7EA94900732F1E /* EntityMovementViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4335702B7EA94900732F1E /* EntityMovementViewModifier.swift */; };
 		FA4335742B7FA3C000732F1E /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4335732B7FA3C000732F1E /* DeviceManager.swift */; };
 		FA4335772B7FC87600732F1E /* GeometryUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4335762B7FC87600732F1E /* GeometryUtilities.swift */; };
+		FA43357B2B85480500732F1E /* PileEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA43357A2B85480500732F1E /* PileEntity.swift */; };
+		FA43357D2B854BDA00732F1E /* PictureManagerPile.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA43357C2B854BDA00732F1E /* PictureManagerPile.swift */; };
+		FA43357F2B85570F00732F1E /* CustomEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA43357E2B85570F00732F1E /* CustomEntity.swift */; };
 		FA5D8C7B2B7D536D00A6CA29 /* DebuggingUIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5D8C7A2B7D536D00A6CA29 /* DebuggingUIImage.swift */; };
 		FA5D8C7F2B7E8F5200A6CA29 /* ImagePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5D8C7E2B7E8F5200A6CA29 /* ImagePreview.swift */; };
 		FAF9AB312B7952180048E5A9 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = FAF9AB302B7952180048E5A9 /* RealityKitContent */; };
@@ -42,6 +45,9 @@
 		FA4335702B7EA94900732F1E /* EntityMovementViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityMovementViewModifier.swift; sourceTree = "<group>"; };
 		FA4335732B7FA3C000732F1E /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
 		FA4335762B7FC87600732F1E /* GeometryUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryUtilities.swift; sourceTree = "<group>"; };
+		FA43357A2B85480500732F1E /* PileEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PileEntity.swift; sourceTree = "<group>"; };
+		FA43357C2B854BDA00732F1E /* PictureManagerPile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureManagerPile.swift; sourceTree = "<group>"; };
+		FA43357E2B85570F00732F1E /* CustomEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEntity.swift; sourceTree = "<group>"; };
 		FA5D8C7A2B7D536D00A6CA29 /* DebuggingUIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggingUIImage.swift; sourceTree = "<group>"; };
 		FA5D8C7E2B7E8F5200A6CA29 /* ImagePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreview.swift; sourceTree = "<group>"; };
 		FAF9AB2B2B7952180048E5A9 /* PhotoFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -216,6 +222,8 @@
 			isa = PBXGroup;
 			children = (
 				FAF9AB922B7A86CB0048E5A9 /* PictureEntity.swift */,
+				FA43357A2B85480500732F1E /* PileEntity.swift */,
+				FA43357E2B85570F00732F1E /* CustomEntity.swift */,
 			);
 			path = PictureEntity;
 			sourceTree = "<group>";
@@ -234,6 +242,7 @@
 			isa = PBXGroup;
 			children = (
 				FAF9AB902B7A86B90048E5A9 /* PictureManager.swift */,
+				FA43357C2B854BDA00732F1E /* PictureManagerPile.swift */,
 			);
 			path = PictureManager;
 			sourceTree = "<group>";
@@ -346,8 +355,11 @@
 				FAF9AB572B7956420048E5A9 /* StarterView.swift in Sources */,
 				FAF9AB932B7A86CB0048E5A9 /* PictureEntity.swift in Sources */,
 				FA4335772B7FC87600732F1E /* GeometryUtilities.swift in Sources */,
+				FA43357B2B85480500732F1E /* PileEntity.swift in Sources */,
 				FAF9AB522B7953CE0048E5A9 /* ViewModel.swift in Sources */,
+				FA43357F2B85570F00732F1E /* CustomEntity.swift in Sources */,
 				FAF9AB542B7953DB0048E5A9 /* Module.swift in Sources */,
+				FA43357D2B854BDA00732F1E /* PictureManagerPile.swift in Sources */,
 				FAF9AB372B7952180048E5A9 /* ImmersiveView.swift in Sources */,
 				FA4335742B7FA3C000732F1E /* DeviceManager.swift in Sources */,
 				FAF9AB912B7A86B90048E5A9 /* PictureManager.swift in Sources */,

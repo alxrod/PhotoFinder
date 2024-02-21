@@ -94,7 +94,6 @@ extension ViewModel {
         convertAssetsToUIImages(assets: assetsToFetch) { images in
             DispatchQueue.main.async {
                 let outImages = images.map { NamedImage(image: $0) }
-                print("Out images of size \(outImages.count)")
                 self.photosInView += outImages.count
                 self.photos += outImages
             }

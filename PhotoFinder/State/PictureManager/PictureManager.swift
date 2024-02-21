@@ -20,6 +20,8 @@ class PictureManager {
     var pictureEntities: [PictureEntity] = []
     var pictureEntityNameSet: Set<String> = []
     
+    var pileEntities: [PileEntity] = []
+    
     public var deviceManager: DeviceManager
     
     @MainActor
@@ -80,74 +82,59 @@ class PictureManager {
         return combinedRotation
     }
     
+
     
-    // Function to update the location of a specific picture entity by index
-    func updatePictureLoc(name: String, to newPos: SIMD3<Float>) {
+    func findPictureEntity(name: String) -> PictureEntity? {
         if !pictureEntityNameSet.contains(name) {
-            return
+            return nil
         }
         for pictureEntity in pictureEntities {
             if pictureEntity.image.name == name {
-                let rotationQuaternion = rotationToFaceDevice(newPos: newPos, curQuat: pictureEntity.orientation)
-
-                pictureEntity.move(to: Transform(
-                    scale: pictureEntity.scale,
-                    rotation: rotationQuaternion,
-                    translation: newPos), relativeTo: rootEntity)
+                return pictureEntity
+            }
+        }
+        return nil
+    }
+    
+    func updateLoc(entity: CustomEntity, newPos: SIMD3<Float>) {
+        let rotationQuaternion = rotationToFaceDevice(newPos: newPos, curQuat: entity.orientation)
+        
+        entity.move(to: Transform(
+            scale: entity.scale,
+            rotation: rotationQuaternion,
+            translation: newPos), relativeTo: rootEntity)
+        
+        return
+    }
+    
+    func updateSpecPictureScale(pictureEntity: PictureEntity, newScale: SIMD3<Float>) {
+        pictureEntity.move(to: Transform(
+            scale: newScale,
+            rotation: pictureEntity.orientation,
+            translation: pictureEntity.position), relativeTo: rootEntity)
+    }
+    
+    func checkPictureCollisions(pictureEntity: PictureEntity) {
+        
+        for pile in pileEntities {
+            if pile.isColliding(with: pictureEntity) {
+                print("DETECTING COLLISION WITH")
+                addPictureToPile(pictureEntity: pictureEntity, pileEntity: pile)
                 return
             }
         }
-    }
-    
-    func updateSpecPictureLoc(pictureEntity: PictureEntity, newPos: SIMD3<Float>) {
-        let rotationQuaternion = rotationToFaceDevice(newPos: newPos, curQuat: pictureEntity.orientation)
-
-        pictureEntity.move(to: Transform(
-            scale: pictureEntity.scale,
-            rotation: rotationQuaternion,
-            translation: newPos), relativeTo: rootEntity)
-        return
+        
+        var collidedWith: [PictureEntity] = []
+        for picEnt in pictureEntities {
+            if picEnt != pictureEntity && pictureEntity.isColliding(with: picEnt) {
+                collidedWith.append(picEnt)
+            }
+        }
+        if collidedWith.isEmpty {
+            return
+        }
+        collidedWith.append(pictureEntity)
+        self.createPileEntity(from: collidedWith, starterPosition: pictureEntity.position)
     }
 }
 
-
-//let targetRotation = simd_quatf(from: forwardDirV, to: directionVector)
-//
-//// Detect if the current quaternion represents a rotation near 180 degrees
-//if abs(curQuat.angle) > .pi - 0.01 { // Adjust the threshold as needed
-//    print("TRIGGERING THRESHOOLD")
-//    // Approach for handling near-180-degree rotations
-//    // Here, we smoothly interpolate to the target rotation to avoid abrupt changes
-//    
-//    // Determine a safe interpolation factor; adjust this based on your application's needs
-//    let t: Float = 0.1 // Example: small step towards target rotation
-//    
-//    // Slerp between the current quaternion and the target rotation
-//    let newOrientation = simd_slerp(curQuat, targetRotation, t)
-//    
-//    return newOrientation.normalized
-//} else {
-//    // Handle the general case where the rotation is not near 180 degrees
-//    // Your existing logic for calculating the new orientation
-//    var newOrientation: simd_quatf
-//    if abs(dot) > 0.985 {
-//        // Handling for nearly parallel vectors as before
-//        let isDirectionUpwards = dot > 0
-//        let upVector = curQuat.act(SIMD3<Float>(0, 1, 0))
-//        let rotationAxis = isDirectionUpwards ? upVector : -upVector
-//        let angle = isDirectionUpwards ? 0.0 : .pi
-//        newOrientation = simd_mul(curQuat, simd_quatf(angle: Float(angle), axis: rotationAxis))
-//    } else {
-//        // Calculate rotation as before
-//        var cross = cross(currentForwardVector, directionVector)
-//        if length(cross) < 0.001 {
-//            cross = curQuat.act(SIMD3<Float>(0, 1, 0))
-//        }
-//        let rotationAxis = normalize(cross)
-//        var angle = acos(min(max(dot, -1.0), 1.0))
-//        let rotationDelta = simd_quatf(angle: angle, axis: rotationAxis)
-//        newOrientation = simd_mul(curQuat, rotationDelta).normalized
-//    }
-//    
-//    return newOrientation.normalized
-//}

@@ -42,17 +42,6 @@ struct PreviewView: View {
                 }
             }
         }
-//        if model.photos.count > 0 {
-//            ImagePreview(image: model.photos[0], imageSize: imageSize)
-//        } else {
-//            Text("Loading")
-//                .onAppear {
-//                    model.checkPhotoLibraryPermission()
-//                    Task {
-//                        model.fetchPhotos()
-//                    }
-//                }
-//        }
     }
 }
 

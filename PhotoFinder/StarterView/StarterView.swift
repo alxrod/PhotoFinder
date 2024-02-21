@@ -22,10 +22,10 @@ struct StarterView: View {
 
     var body: some View {
         GeometryReader3D { proxy3D in
-            VStack {
-                Text(model.titleText).font(.title)
+            VStack(alignment: .center) {
+                Text(model.titleText).font(.extraLargeTitle2)
                 ImmersiveViewToggle()
-                PreviewView().environmentObject(model)
+//                PreviewView().environmentObject(model)
             }
             .onChange(of: scenePhase, initial: true) {
                 print("HomeView scene phase: \(scenePhase)")
@@ -70,8 +70,6 @@ struct StarterView: View {
                 await model.monitorSessionEvents()
             }
             .padding(70)
-            .onAppear {
-            }
             
         }
         
