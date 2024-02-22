@@ -17,31 +17,79 @@ struct PreviewView: View {
     private let spacing = 20.0
     private let imageSize = 100.0
     
+    public var images: [NamedImage]
+    var cameraRollMode: Bool
+    public var removeImage: (String) -> ()
+    public var requestMorePhotos: () -> ()
+    
+    
+    @State private var pageLimit = 30
+    @State private var currentPage = 0
+    
+    private var maxPage: Int {
+        images.count / pageLimit + (images.count % pageLimit > 0 ? 1 : 0) - 1
+    }
+    
     var body: some View {
         VStack {
             GeometryReader { geometry in
 //                ScrollView {
                     let columns = Array(repeating: GridItem(.flexible()), count: Int(geometry.size.width / CGFloat(spacing + imageSize)))
+                
+                    
 
                     LazyVGrid(columns: columns) {
-                        ForEach(model.photos.indices, id: \.self) { index in
-                            if !model.photos[index].inImmersiveSpace {
-                                VStack {
-                                    ImagePreview(imageIndex: index, imageSize: imageSize).environmentObject(model)
-                                }.frame(width: imageSize, height: imageSize)
-                            }
+                        ForEach(currentPageImages.indices, id: \.self) { index in
+                            VStack {
+                                ImagePreview(
+                                    image: currentPageImages[index],
+                                    imageSize: imageSize,
+                                    removeImage: removeImage
+                                ).environmentObject(model)
+                            }.frame(width: imageSize, height: imageSize)
                         }
+                    }.onChange(of: geometry.size) {
+                        let columnsCount = Int((geometry.size.width + spacing) / (imageSize + spacing))
+                        let rowsCount = Int(geometry.size.height / (imageSize + spacing))
+                        
+                        let newLim = columnsCount*rowsCount
+                        if newLim > images.count && cameraRollMode {
+                            requestMorePhotos()
+                        }
+                        pageLimit = newLim
                     }
 //                }
             }
             .padding()
-            .onAppear {
-                model.checkPhotoLibraryPermission()
-                Task {
-                    model.fetchPhotos(pageNumber: 0, pageSize: model.fetchSize)
+            
+            HStack {
+                Button("Previous") {
+                    if currentPage > 0 { currentPage -= 1 }
                 }
+                .disabled(currentPage <= 0)
+                
+                Spacer()
+                
+                Text("Page \(currentPage + 1) \(cameraRollMode ? "" : " of \(maxPage + 1)")")
+                
+                Spacer()
+                
+                Button("Next") {
+                    if currentPage < maxPage || cameraRollMode { currentPage += 1 }
+                    if images.count - (currentPage*pageLimit) <= pageLimit {
+                        requestMorePhotos()
+                    }
+                }
+                .disabled(currentPage >= maxPage && !cameraRollMode)
             }
+            .padding()
         }
+    }
+    
+    private var currentPageImages: [NamedImage] {
+        let startIndex = currentPage * pageLimit
+        let endIndex = min(startIndex + pageLimit, images.count)
+        return Array(images[startIndex..<endIndex])
     }
 }
 

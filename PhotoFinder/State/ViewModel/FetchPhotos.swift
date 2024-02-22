@@ -30,20 +30,45 @@ extension ViewModel {
             titleText = "Permission Denied"
         }
     }
+    
+    func getCameraRoll() -> [NamedImage] {
+        var cameraRollImages: [NamedImage] = []
+        for image in photos {
+            if image.space == ImageSpace.cameraRoll {
+                cameraRollImages.append(image)
+            }
+        }
+        if cameraRollImages.count < self.fetchSize*2 {
+            cameraRollImages += getNextCameraRollPage()
+        }
+        return cameraRollImages
+    }
+    
+    func getNextCameraRollPage() -> [NamedImage] {
+        let newPhotos = self.fetchPhotos(pageNumber: self.fetchPage, pageSize: self.fetchSize)
+        self.fetchPage += 1
+        return newPhotos
+    }
+    
+//    func getPilePhotos() -> [NamedImage] {
+//        
+//    }
 
     // MARK: - Fetch Photos
-    func fetchPhotos(pageNumber: Int, pageSize: Int) {
+    func fetchPhotos(pageNumber: Int, pageSize: Int) -> [NamedImage] {
         if self.DEBUG_MODE {
             var testImages: [NamedImage] = []
             for _ in 0..<pageSize {
-                testImages.append(NamedImage(image: createSolidColorImage(size: CGSize(width: 100, height: 100))))
+                testImages.append(
+                    NamedImage(image: createSolidColorImage(size: CGSize(width: 100, height: 100)), space: .cameraRoll)
+                )
             }
             self.photos += testImages
             self.photosInView += testImages.count
-            return
+            return testImages
         }
 
-        guard let cameraRollAlbum = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil).firstObject else { return }
+        guard let cameraRollAlbum = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil).firstObject else { return [] }
 
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
@@ -54,7 +79,7 @@ extension ViewModel {
         let count = fetchResult.count
         if start >= count {
             // Handle case where requested page is out of bounds
-            return
+            return []
         }
 
         // Prepare a block to convert PHAsset to UIImage
@@ -91,23 +116,17 @@ extension ViewModel {
         
 
         // Convert the sliced PHAssets to UIImages
+        var returnImages: [NamedImage] = []
         convertAssetsToUIImages(assets: assetsToFetch) { images in
             DispatchQueue.main.async {
-                let outImages = images.map { NamedImage(image: $0) }
+                let outImages = images.map { NamedImage(image: $0, space: .cameraRoll) }
                 self.photosInView += outImages.count
                 self.photos += outImages
+                returnImages = outImages
             }
         }
-    }
-
-    public func markPhotoInSpace(_ imageIndex: Int) {
-        if imageIndex > self.photos.count || imageIndex < 0 { return }
-        self.photos[imageIndex].inImmersiveSpace = true
-        self.photosInView -= 1
-        if photosInView < self.fetchSize {
-            self.fetchPage += 1
-            self.fetchPhotos(pageNumber: self.fetchPage, pageSize: self.fetchSize)
-        }
+        return returnImages
+        
     }
     
     // MARK: - Helper Method to Convert PHAsset to UIImage

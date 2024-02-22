@@ -12,11 +12,17 @@ import ARKit
 
 class ViewModel: ObservableObject {
     
+    
+    // MARK: - Navigation
+    @Published var navigationPath: [Module] = []
+    
     // MARK: - Properties
-    var DEBUG_MODE: Bool = true
+    var DEBUG_MODE: Bool = false
     
     var titleText: String = "Photo Gallery"
     
+    
+//  Array for all photos in the entire app space
     @Published var photos: [NamedImage] = []
     @Published var photosInView = 0
     
@@ -28,8 +34,16 @@ class ViewModel: ObservableObject {
     public var fetchSize: Int = 30
     
     // MARK: - Immersive Photo Display
+    static let pictureSpace: String = "SortingImmersiveSpace"
+    
     @Published var pictureManager: PictureManager
     
+    func getPhoto(_ name: String) -> NamedImage? {
+        return photos.first{ image in
+            return image.name == name
+        }
+    }
+
     
     // MARK: - ARKit Sensing Data:
     var arkitSession = ARKitSession()
@@ -83,6 +97,17 @@ class ViewModel: ObservableObject {
         }
     }
     
+    func selectPile(_ pileEntity: PileEntity) {
+        self.pictureManager.selectPile(pileEntity)
+        
+        let newView = Module.pile(pileName: pileEntity.pileName, pileId: pileEntity.pileId)
+        let pathCount = self.navigationPath.count
+        if pathCount > 0 && Module.isPile(self.navigationPath[pathCount-1]) {
+            let oldView = self.navigationPath.popLast()
+        }
+        self.navigationPath.append(newView)
+        print(self.navigationPath)
+    }
     
     
     
@@ -94,8 +119,40 @@ class ViewModel: ObservableObject {
     }
 }
 
-struct NamedImage {
+class NamedImage {
     public var image: UIImage
+    public var space: ImageSpace
     public var name = UUID().uuidString
-    public var inImmersiveSpace = false
+    
+    init(image: UIImage, space: ImageSpace, name: String = UUID().uuidString) {
+        self.image = image
+        self.space = space
+        self.name = name
+    }
+}
+
+enum ImageSpace: Hashable, Identifiable, Equatable {
+    var id: String {
+        switch self {
+        case .floating:
+            return "floating"
+        case .cameraRoll:
+            return "cameraRoll"
+        case .pile(let pileId):
+            return pileId
+        }
+    }
+    
+    static func isPile(_ s: ImageSpace) -> Bool{
+        switch s {
+        case .pile(let pileId):
+            return true
+        default:
+            return false
+        }
+    }
+
+    case floating
+    case cameraRoll
+    case pile(pileId: String)
 }

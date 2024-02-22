@@ -16,11 +16,11 @@ struct PhotoFinderApp: App {
     
     var body: some Scene {
         WindowGroup(id: "launcher") {
-            StarterView()
+            NavigationRoot()
                 .environmentObject(model)
         }
 
-        ImmersiveSpace(id: Module.active.name) {
+        ImmersiveSpace(id: ViewModel.pictureSpace) {
             ImmersiveView()
                 .environmentObject(model)
         }.immersionStyle(selection: .constant(.mixed), in: .mixed)

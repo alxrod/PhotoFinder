@@ -11,21 +11,24 @@ import UIKit
 import SwiftUI
 
 class PileEntity: CustomEntity {
-    var pileName: String = "Trapp Family Lodge Trip"
+    var pileName: String = "Untitled"
     var pictureEntities: [PictureEntity] = []
+    private var textEntity: ModelEntity?
     var planeSize: SIMD2<Float>
-
+    var pileId: String
     /// Initializes a new PileEntity.
     /// - Parameters:
     ///   - starterPosition: The starting position for the pile.
     ///   - pictureEntities: The list of PictureEntity instances to be stacked.
     init(pictureEntities: [PictureEntity]) {
+        self.pileId = UUID().uuidString
         self.planeSize = pictureEntities[0].planeSize
         super.init()
         let refPic = pictureEntities[pictureEntities.count / 2]
         self.position = refPic.position
         self.scale = refPic.scale
         self.orientation = refPic.orientation
+        
         
 
 //        addOriginMarker()
@@ -71,7 +74,7 @@ class PileEntity: CustomEntity {
     }
     
     private func insertPic(_ entity: PictureEntity, offset: Float) {
-        
+        entity.image.space = .pile(pileId: self.pileId)
         entity.position = SIMD3<Float>(0,0,offset)
         // Generate a random rotation around the Z-axis
         let minAngleDegrees: Float = -35
@@ -91,6 +94,32 @@ class PileEntity: CustomEntity {
         self.addChild(entity)
         pictureEntities.append(entity)
     }
+    
+    func removeByName(_ name: String) -> PictureEntity? {
+        // Remove the entity from the pictureEntities array
+        let picEntity: PictureEntity
+        if let index = pictureEntities.firstIndex(where: { $0.picName == name }) {
+            picEntity = pictureEntities[index]
+            pictureEntities.remove(at: index)
+        } else {
+            return nil
+        }
+        
+        // Remove the entity from the PileEntity's children
+        picEntity.removeFromParent()
+        
+        // Optionally, you might want to reset the entity's position, rotation, and other properties
+        // if you plan to use it elsewhere in your scene or application
+        picEntity.position = SIMD3<Float>(0, 0, 0)
+        picEntity.orientation = simd_quatf(angle: 0, axis: SIMD3<Float>(0, 0, 1))
+        picEntity.scale = SIMD3<Float>(1, 1, 1)
+        
+        return picEntity
+        
+        // If the entity's space property is set based on being in this pile, you may want to reset it as well
+        // entity.image.space = .someOtherSpace // Adjust this based on your app's logic
+    }
+
  
 }
 
@@ -101,7 +130,6 @@ extension PileEntity {
     func isColliding(with entity: PictureEntity) -> Bool {
         let pileBoundingBox = calculateBoundingBox()
         let entityBoundingBox = entity.calculate3DBoundingBox()
-        print("Testing collision between pile: \(pileBoundingBox) and pic \(entity)")
         return doBoxesIntersect(pileBoundingBox, entityBoundingBox)
     }
     
@@ -149,6 +177,8 @@ extension PileEntity {
     }
     
     func addTextLabel() {
+        textEntity?.removeFromParent()
+        
         let textEntity = textGen(textString: pileName)
         
         // Calculate the highest point and position the text entity
@@ -161,11 +191,34 @@ extension PileEntity {
         
         // Add the text entity as a child to the PileEntity
         self.addChild(textEntity)
+        self.textEntity = textEntity
+    }
+    
+    func rename(to newName: String) {
+        // Update the pile name
+        self.pileName = newName
+        
+        // Call addTextLabel to remove the old text entity and add a new one with the updated name
+        addTextLabel()
     }
 
     func calculateHighestPoint() -> Float {
         // Assuming pictureEntities are stacked along the Z axis, find the highest Z value
         let highestEntity = pictureEntities.max(by: { $0.position.z < $1.position.z })
         return highestEntity?.position.z ?? 0
+    }
+}
+
+extension PileEntity {
+    func highlight() {
+        for pic in pictureEntities {
+            pic.highlight()
+        }
+    }
+    
+    func dehighlight() {
+        for pic in pictureEntities {
+            pic.dehighlight()
+        }
     }
 }

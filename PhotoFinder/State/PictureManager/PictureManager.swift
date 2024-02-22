@@ -22,6 +22,8 @@ class PictureManager {
     
     var pileEntities: [PileEntity] = []
     
+    var selectedPile: PileEntity?
+    
     public var deviceManager: DeviceManager
     
     @MainActor
@@ -36,13 +38,13 @@ class PictureManager {
             return
         }
         
-        print("Adding picture \(image)")
         let pictureEntity = PictureEntity(image: image, pos: pos, rot: rot, planeSize: size)
         pictureEntityNameSet.insert(image.name)
 //        print("Created picture entity \(pictureEntity)")
         rootEntity.addChild(pictureEntity)
         pictureEntities.append(pictureEntity)
     }
+    
     
     
 //    Calculate from starter lcoation
@@ -118,7 +120,6 @@ class PictureManager {
         
         for pile in pileEntities {
             if pile.isColliding(with: pictureEntity) {
-                print("DETECTING COLLISION WITH")
                 addPictureToPile(pictureEntity: pictureEntity, pileEntity: pile)
                 return
             }

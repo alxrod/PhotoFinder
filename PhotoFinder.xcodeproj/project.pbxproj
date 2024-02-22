@@ -13,8 +13,12 @@
 		FA43357B2B85480500732F1E /* PileEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA43357A2B85480500732F1E /* PileEntity.swift */; };
 		FA43357D2B854BDA00732F1E /* PictureManagerPile.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA43357C2B854BDA00732F1E /* PictureManagerPile.swift */; };
 		FA43357F2B85570F00732F1E /* CustomEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA43357E2B85570F00732F1E /* CustomEntity.swift */; };
+		FA4335832B86BAB400732F1E /* ImageHoverEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4335822B86BAB300732F1E /* ImageHoverEffect.swift */; };
+		FA4335862B86CDFA00732F1E /* PileWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4335852B86CDFA00732F1E /* PileWindowView.swift */; };
+		FA4335892B86E16700732F1E /* NavigationRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4335882B86E16700732F1E /* NavigationRoot.swift */; };
 		FA5D8C7B2B7D536D00A6CA29 /* DebuggingUIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5D8C7A2B7D536D00A6CA29 /* DebuggingUIImage.swift */; };
 		FA5D8C7F2B7E8F5200A6CA29 /* ImagePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5D8C7E2B7E8F5200A6CA29 /* ImagePreview.swift */; };
+		FA6096572B873C8200E0B68F /* PaginationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6096562B873C8200E0B68F /* PaginationView.swift */; };
 		FAF9AB312B7952180048E5A9 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = FAF9AB302B7952180048E5A9 /* RealityKitContent */; };
 		FAF9AB332B7952180048E5A9 /* PhotoFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB322B7952180048E5A9 /* PhotoFinderApp.swift */; };
 		FAF9AB372B7952180048E5A9 /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB362B7952180048E5A9 /* ImmersiveView.swift */; };
@@ -25,7 +29,6 @@
 		FAF9AB542B7953DB0048E5A9 /* Module.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB532B7953DB0048E5A9 /* Module.swift */; };
 		FAF9AB572B7956420048E5A9 /* StarterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB562B7956420048E5A9 /* StarterView.swift */; };
 		FAF9AB5A2B79819E0048E5A9 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB592B79819E0048E5A9 /* PreviewView.swift */; };
-		FAF9AB5D2B79D1940048E5A9 /* ImmersiveViewToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB5C2B79D1940048E5A9 /* ImmersiveViewToggle.swift */; };
 		FAF9AB912B7A86B90048E5A9 /* PictureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB902B7A86B90048E5A9 /* PictureManager.swift */; };
 		FAF9AB932B7A86CB0048E5A9 /* PictureEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB922B7A86CB0048E5A9 /* PictureEntity.swift */; };
 		FAF9AB952B7AA7910048E5A9 /* FetchPhotos.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF9AB942B7AA7910048E5A9 /* FetchPhotos.swift */; };
@@ -48,8 +51,12 @@
 		FA43357A2B85480500732F1E /* PileEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PileEntity.swift; sourceTree = "<group>"; };
 		FA43357C2B854BDA00732F1E /* PictureManagerPile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureManagerPile.swift; sourceTree = "<group>"; };
 		FA43357E2B85570F00732F1E /* CustomEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEntity.swift; sourceTree = "<group>"; };
+		FA4335822B86BAB300732F1E /* ImageHoverEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageHoverEffect.swift; sourceTree = "<group>"; };
+		FA4335852B86CDFA00732F1E /* PileWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PileWindowView.swift; sourceTree = "<group>"; };
+		FA4335882B86E16700732F1E /* NavigationRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationRoot.swift; sourceTree = "<group>"; };
 		FA5D8C7A2B7D536D00A6CA29 /* DebuggingUIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggingUIImage.swift; sourceTree = "<group>"; };
 		FA5D8C7E2B7E8F5200A6CA29 /* ImagePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreview.swift; sourceTree = "<group>"; };
+		FA6096562B873C8200E0B68F /* PaginationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginationView.swift; sourceTree = "<group>"; };
 		FAF9AB2B2B7952180048E5A9 /* PhotoFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAF9AB2F2B7952180048E5A9 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		FAF9AB322B7952180048E5A9 /* PhotoFinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFinderApp.swift; sourceTree = "<group>"; };
@@ -63,7 +70,6 @@
 		FAF9AB532B7953DB0048E5A9 /* Module.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Module.swift; sourceTree = "<group>"; };
 		FAF9AB562B7956420048E5A9 /* StarterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarterView.swift; sourceTree = "<group>"; };
 		FAF9AB592B79819E0048E5A9 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
-		FAF9AB5C2B79D1940048E5A9 /* ImmersiveViewToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveViewToggle.swift; sourceTree = "<group>"; };
 		FAF9AB902B7A86B90048E5A9 /* PictureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureManager.swift; sourceTree = "<group>"; };
 		FAF9AB922B7A86CB0048E5A9 /* PictureEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureEntity.swift; sourceTree = "<group>"; };
 		FAF9AB942B7AA7910048E5A9 /* FetchPhotos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchPhotos.swift; sourceTree = "<group>"; };
@@ -112,6 +118,22 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		FA4335842B86CDEB00732F1E /* PileWindowView */ = {
+			isa = PBXGroup;
+			children = (
+				FA4335852B86CDFA00732F1E /* PileWindowView.swift */,
+			);
+			path = PileWindowView;
+			sourceTree = "<group>";
+		};
+		FA4335872B86E15C00732F1E /* NavigationRoot */ = {
+			isa = PBXGroup;
+			children = (
+				FA4335882B86E16700732F1E /* NavigationRoot.swift */,
+			);
+			path = NavigationRoot;
+			sourceTree = "<group>";
+		};
 		FAF9AB222B7952180048E5A9 = {
 			isa = PBXGroup;
 			children = (
@@ -134,6 +156,8 @@
 		FAF9AB2D2B7952180048E5A9 /* PhotoFinder */ = {
 			isa = PBXGroup;
 			children = (
+				FA4335872B86E15C00732F1E /* NavigationRoot */,
+				FA4335842B86CDEB00732F1E /* PileWindowView */,
 				FA4335752B7FC86900732F1E /* Utilities */,
 				FAF9AB8E2B7A86A40048E5A9 /* State */,
 				FAF9AB8C2B7A71910048E5A9 /* Entities */,
@@ -196,6 +220,8 @@
 			children = (
 				FAF9AB592B79819E0048E5A9 /* PreviewView.swift */,
 				FA5D8C7E2B7E8F5200A6CA29 /* ImagePreview.swift */,
+				FA4335822B86BAB300732F1E /* ImageHoverEffect.swift */,
+				FA6096562B873C8200E0B68F /* PaginationView.swift */,
 			);
 			path = PreviewView;
 			sourceTree = "<group>";
@@ -205,7 +231,6 @@
 			children = (
 				FA43356F2B7EA92700732F1E /* Modifiers */,
 				FAF9AB362B7952180048E5A9 /* ImmersiveView.swift */,
-				FAF9AB5C2B79D1940048E5A9 /* ImmersiveViewToggle.swift */,
 			);
 			path = ImmersiveView;
 			sourceTree = "<group>";
@@ -351,21 +376,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				FAF9AB332B7952180048E5A9 /* PhotoFinderApp.swift in Sources */,
-				FAF9AB5D2B79D1940048E5A9 /* ImmersiveViewToggle.swift in Sources */,
 				FAF9AB572B7956420048E5A9 /* StarterView.swift in Sources */,
 				FAF9AB932B7A86CB0048E5A9 /* PictureEntity.swift in Sources */,
+				FA6096572B873C8200E0B68F /* PaginationView.swift in Sources */,
 				FA4335772B7FC87600732F1E /* GeometryUtilities.swift in Sources */,
 				FA43357B2B85480500732F1E /* PileEntity.swift in Sources */,
 				FAF9AB522B7953CE0048E5A9 /* ViewModel.swift in Sources */,
 				FA43357F2B85570F00732F1E /* CustomEntity.swift in Sources */,
 				FAF9AB542B7953DB0048E5A9 /* Module.swift in Sources */,
+				FA4335832B86BAB400732F1E /* ImageHoverEffect.swift in Sources */,
 				FA43357D2B854BDA00732F1E /* PictureManagerPile.swift in Sources */,
 				FAF9AB372B7952180048E5A9 /* ImmersiveView.swift in Sources */,
 				FA4335742B7FA3C000732F1E /* DeviceManager.swift in Sources */,
 				FAF9AB912B7A86B90048E5A9 /* PictureManager.swift in Sources */,
 				FAF9AB5A2B79819E0048E5A9 /* PreviewView.swift in Sources */,
 				FA5D8C7F2B7E8F5200A6CA29 /* ImagePreview.swift in Sources */,
+				FA4335862B86CDFA00732F1E /* PileWindowView.swift in Sources */,
 				FA4335712B7EA94900732F1E /* EntityMovementViewModifier.swift in Sources */,
+				FA4335892B86E16700732F1E /* NavigationRoot.swift in Sources */,
 				FA5D8C7B2B7D536D00A6CA29 /* DebuggingUIImage.swift in Sources */,
 				FAF9AB952B7AA7910048E5A9 /* FetchPhotos.swift in Sources */,
 			);

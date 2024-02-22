@@ -45,7 +45,6 @@ struct EntityMovementViewModifier: ViewModifier {
             .targetedToAnyEntity()
             .onChanged { value in
                 // Your existing drag gesture logic
-                
                 guard let entity = extractPicEnt(starting: value.entity) else { return }
                 let convertedTranslation = value.convert(value.translation3D, from: .local, to: entity.parent!)
                 if sourceTransform == nil {
@@ -90,8 +89,15 @@ struct EntityMovementViewModifier: ViewModifier {
                 sourceScale = SIMD3<Float>(-1,-1,-1)
             }
         
+        let tapGesture = SpatialTapGesture()
+            .targetedToAnyEntity()
+            .onEnded { value in
+                guard let pileEntity = extractPicEnt(starting: value.entity) as? PileEntity else { return }
+                model.selectPile(pileEntity)
+            }
+        
     
-        let combinedGesture = SimultaneousGesture(dragGesture, magnifyGesture)
+        let combinedGesture = SimultaneousGesture(SimultaneousGesture(dragGesture, tapGesture), magnifyGesture)
         
         content.gesture(combinedGesture)
         

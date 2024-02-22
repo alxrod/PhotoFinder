@@ -13,9 +13,16 @@ class PictureEntity: CustomEntity {
 
     public var planeEntity: ModelEntity?
 
-    public var cubeEntity: ModelEntity?
+    public var borderEntity: ModelEntity?
+    
     public var planeSize: SIMD2<Float>
     public var image: NamedImage
+    
+    var picName: String {
+        get {
+            return self.image.name
+        }
+    }
 
     init(image: NamedImage, pos: SIMD3<Float>, rot: simd_quatf?, planeSize: SIMD2<Float> = [0.25, 0.25]) {
         self.planeSize = planeSize
@@ -54,6 +61,7 @@ class PictureEntity: CustomEntity {
             if let planeEntity = planeEntity {
                 planeEntity.generateCollisionShapes(recursive: true)
                 planeEntity.components.set(InputTargetComponent())
+                planeEntity.components.set(HoverEffectComponent())
                 self.addChild(planeEntity)
             }
 
@@ -63,6 +71,7 @@ class PictureEntity: CustomEntity {
         if let rot = rot {
             self.orientation = rot
         }
+        
         
     }
     
@@ -107,5 +116,36 @@ extension PictureEntity {
         let maxCorner = SIMD3<Float>(center.x + halfWidth, center.y + halfHeight, center.z + halfDepth)
         
         return (min: minCorner, max: maxCorner)
+    }
+}
+
+
+extension PictureEntity {
+
+    func highlight() {
+        guard let planeEntity = planeEntity else { return }
+        
+        let borderThickness = Float(0.015)
+        
+        // Create a slightly larger plane for the border effect
+        let borderSize: SIMD2<Float> = [planeSize.x + borderThickness, planeSize.y + borderThickness] // Adjust the border size as needed
+        let borderMesh = MeshResource.generatePlane(width: borderSize.x, height: borderSize.y)
+        let borderMaterial = UnlitMaterial(color: .white)
+        let borderEntity = ModelEntity(mesh: borderMesh, materials: [borderMaterial])
+        
+        // Ensure the border plane is slightly behind the original plane to be visible
+        borderEntity.position.z -= 0.001 // Adjust the Z-axis offset as needed
+        
+        // Name the border entity for identification
+        borderEntity.name = "borderEntity"
+        self.borderEntity = borderEntity
+        
+        // Add the border entity as a child of the plane entity
+        self.addChild(borderEntity)
+    }
+
+    func dehighlight() {
+        // Remove the border entity by searching for it by name
+        self.borderEntity?.removeFromParent()
     }
 }
