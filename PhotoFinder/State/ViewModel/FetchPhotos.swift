@@ -48,8 +48,6 @@ extension ViewModel {
         fetchResult.enumerateObjects { (asset, _, _) in
             self.unloadedAssetQueue.append(asset)
         }
-        print("Unloaded asset queue is now \(self.unloadedAssetQueue.count)")
-        
     }
     
     func generateNamedImages(until end: Int) {
