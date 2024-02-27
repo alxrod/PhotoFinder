@@ -26,22 +26,18 @@ class ViewModel: ObservableObject {
     
 
     // MARK: - Photo Fetching Properties
-    @Published var photos: [NamedImage] = []
+    @Published var cameraRoll: [NamedImage] = []
+    @Published var inSpace: [NamedImage] = []
+    
     let photosQueue = DispatchQueue(label: "com.photofinder.photosQueue")
-    public var fetchOffset: Int = 0
-    public var fetchSize: Int = 30
+    var unloadedAssetQueue: [PHAsset] = []
     
     // MARK: - Immersive Photo Display
     static let pictureSpace: String = "SortingImmersiveSpace"
-    
     @Published var pictureManager: PictureManager
-    
-    func getPhoto(_ name: String) -> NamedImage? {
-        return photos.first{ image in
-            return image.name == name
-        }
-    }
 
+    
+    
     
     // MARK: - ARKit Sensing Data:
     var arkitSession = ARKitSession()
@@ -114,32 +110,45 @@ class ViewModel: ObservableObject {
     init() {
         pictureManager = PictureManager()
         checkPhotoLibraryPermission()
-        Task { //Preload photos
-            fetchPhotos()
-            fetchPhotos()
-        }
-        
+        cacheFetchResults()
     }
 }
 
 class NamedImage {
-    public var image: UIImage
+    public var asset: PHAsset
+    public var uiImage: UIImage?
+    
+    public var image: UIImage { //currently patch cause entire code base requires image to not be optional
+        if let img = uiImage {
+            return img
+        } else {
+            return createSolidColorImage(size: CGSize(width: 100, height: 100))
+        }
+    }
+    
     public var imageQuality: ImageQuality
     public var space: ImageSpace
     public var name = UUID().uuidString
     
     
-    init(image: UIImage, quality: ImageQuality, space: ImageSpace, name: String = UUID().uuidString) {
-        self.image = image
-        self.imageQuality = quality
+    init(asset: PHAsset, image: UIImage?, quality: ImageQuality, space: ImageSpace, name: String = UUID().uuidString) {
+        if let img = image {
+            self.uiImage = img
+            self.imageQuality = quality
+        } else {
+            self.uiImage = nil
+            self.imageQuality = .empty
+        }
+        self.asset = asset
         self.space = space
         self.name = name
     }
 }
 
 enum ImageQuality: Int {
-    case low = 0
-    case high = 1
+    case empty = 0
+    case low = 1
+    case high = 2
 }
 enum ImageSpace: Hashable, Identifiable, Equatable {
     var id: String {

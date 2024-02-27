@@ -20,13 +20,15 @@ struct PreviewView: View {
     public var images: [NamedImage]
     var cameraRollMode: Bool
     public var removeImage: (String) -> ()
-    public var requestMorePhotos: () -> ()
+    
+    public var requestPhotoRange: (Int, Int) -> ()
     
     
     @State private var currentPage = 0
+    @State private var pageSize = 30
     
     private var maxPage: Int {
-        images.count / model.fetchSize + (images.count % model.fetchSize > 0 ? 1 : 0) - 1
+        images.count / pageSize + (images.count % pageSize > 0 ? 1 : 0) - 1
     }
     
     var body: some View {
@@ -51,12 +53,12 @@ struct PreviewView: View {
                         let rowsCount = Int(geometry.size.height / (imageSize + spacing))
                         
                         let newLim = columnsCount*rowsCount
-                        if newLim > images.count && cameraRollMode {
-                            Task {
-                                requestMorePhotos()
-                            }
-                        }
-                        model.fetchSize = newLim
+                        pageSize = newLim
+                        requestPhotoRange(
+                            currentPage*pageSize,
+                            (currentPage+1)*pageSize
+                        )
+                        
                     }
 //                }
             }
@@ -65,6 +67,10 @@ struct PreviewView: View {
             HStack {
                 Button("Previous") {
                     if currentPage > 0 { currentPage -= 1 }
+                    requestPhotoRange(
+                        currentPage*pageSize,
+                        (currentPage+1)*pageSize
+                    )
                 }
                 .disabled(currentPage <= 0)
                 
@@ -77,13 +83,11 @@ struct PreviewView: View {
                 Button("Next") {
                     if currentPage < maxPage || cameraRollMode { currentPage += 1 }
                     
-                    print("clicked next page lookng at photos from \(currentPage*model.fetchSize) to \((currentPage+1)*model.fetchSize)")
-                    if images.count - ((currentPage+2)*model.fetchSize) <= model.fetchSize {
-                        Task {
-                            print("Requesting a new set of photos")
-                            requestMorePhotos()
-                        }
-                    }
+                    print("clicked next page lookng at photos from \(currentPage*pageSize) to \((currentPage+1)*pageSize)")
+                    requestPhotoRange(
+                        currentPage*pageSize,
+                        (currentPage+1)*pageSize
+                    )
                 }
                 .disabled(currentPage >= maxPage && !cameraRollMode)
             }
@@ -92,8 +96,8 @@ struct PreviewView: View {
     }
     
     private var currentPageImages: [NamedImage] {
-        let startIndex = currentPage * model.fetchSize
-        let endIndex = min(startIndex + model.fetchSize, images.count)
+        let startIndex = currentPage * pageSize
+        let endIndex = min(startIndex + pageSize, images.count)
         if startIndex > endIndex {
             return []
         }

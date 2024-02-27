@@ -26,63 +26,47 @@ struct PileWindowView: View {
 
         VStack(alignment: .leading) {
             HStack {
-                if module == .cameraRoll {
-                    Text(module.name)
-                        .font(.extraLargeTitle2)
-                        .padding(.horizontal, 30)
-                } else {
-                    TextField("", text: $editableName)
-                        .font(.extraLargeTitle2)
-                        .padding(.horizontal, 30)
-                        .submitLabel(.done)
-                        .onSubmit {
-                            if model.pictureManager.selectedPile?.name != editableName {
-                                model.pictureManager.selectedPile?.rename(to: editableName)
-                            }
+                TextField("", text: $editableName)
+                    .font(.extraLargeTitle2)
+                    .padding(.horizontal, 30)
+                    .submitLabel(.done)
+                    .onSubmit {
+                        if model.pictureManager.selectedPile?.name != editableName {
+                            model.pictureManager.selectedPile?.rename(to: editableName)
                         }
-                    Spacer()
-                    Button(action: {
-                        self.editableName = "" // Clear the text field
-                    }) {
-                        Image(systemName: "multiply.circle.fill")
-                            .foregroundColor(.gray)
                     }
-                    .padding(.trailing, 30)
+                Spacer()
+                Button(action: {
+                    self.editableName = "" // Clear the text field
+                }) {
+                    Image(systemName: "multiply.circle.fill")
+                        .foregroundColor(.gray)
                 }
+                .padding(.trailing, 30)
             }
-            
-            PreviewView(images: images, cameraRollMode: module == .cameraRoll) { name in
+            PreviewView(images: images, cameraRollMode: false) { name in
                 let idx = images.firstIndex { $0.name == name }
                 guard let idx = idx else {return}
                 images.remove(at: idx)
-            } requestMorePhotos: {
-                Task {
-                    model.fetchPhotos()
-                }
+            } requestPhotoRange: { _, _ in
+//             What you see is what you get w a pile
             }.environmentObject(model)
-            
         }
+        
+        
         .onChange(of: module) { _, path in
             editableName = module.name
             Task {
-                images = model.getCameraRoll()
+                images = model.pictureManager.getPileIdPics(module.id)
             }
         }
         .onAppear() {
             Task {
-                images = model.getCameraRoll()
+                images = model.pictureManager.getPileIdPics(module.id)
             }
-        }
-        .onReceive(model.$photos) { updatedPhotos in
-            let newPhotos = updatedPhotos.filter { updatedPhoto in
-                !self.images.contains { existingImage in
-                    existingImage.name == updatedPhoto.name
-                }
-            }
-            self.images.append(contentsOf: newPhotos.filter { $0.space == .cameraRoll })
         }
         .padding(.horizontal, 50)
-        .navigationTitle(module == Module.cameraRoll ? "Stop Sorting" : "Camera Roll")
+        .navigationTitle("Camera Roll")
         // Sets the navigation bar title for this view
     }
 }

@@ -22,6 +22,7 @@ struct ImagePreview: View {
     
     @State private var added: Bool = false
     @State private var isSelecting: Bool = false
+    @State private var originalSpace: ImageSpace = .cameraRoll
     
     
     private let inFrontAdjustment: Double = 100 //To make sure the pictures come out ahead of the window itself
@@ -50,25 +51,17 @@ struct ImagePreview: View {
                         SimultaneousGesture(
                         DragGesture(minimumDistance: 0).onChanged { _ in
                             self.isSelecting = true
-                            if self.image.imageQuality == .low {
-
-                            }
                         }.onEnded { _ in
                             self.isSelecting = false
                         },
                         
                         
                         DragGesture(minimumDistance: 15).onChanged { value in
-                            if self.image.imageQuality == .low {
-                                return
-                            }
+//                            if self.image.imageQuality == .low {
+//                                return
+//                            }
                             
                             self.isSelecting = false
-                            
-//                          If coming from pile, have to take it out of space to be able to move it elsewhere
-                            if ImageSpace.isPile(image.space) {
-                                self.model.pictureManager.removeFromPileByName(image.name, pileEntityId: image.space.id)
-                            }
     
                             if let transform = proxy.transform(in: .named(ViewModel.pictureSpace)) {
                                 let point = SIMD4<Double>(
@@ -93,9 +86,11 @@ struct ImagePreview: View {
                                 
                                 if added {
                                     guard let picEntity = model.pictureManager.findPictureEntity(name: image.name) else { return }
-                                    
                                     model.pictureManager.updateLoc(entity: picEntity, newPos: outPoint)
                                 } else {
+                                    
+        //                          If coming from pile, have to take it out of space to be able to move it elsewhere
+                                    originalSpace = image.space
                                     image.space = .floating
                                     model.pictureManager.addPicture(
                                         from: image,
@@ -103,10 +98,20 @@ struct ImagePreview: View {
                                         rot: nil
                                     )
                                     added = true
+                                    
+                                    
+        
                                 }
 
                             }
                         }.onEnded { value in
+                            if ImageSpace.isPile(originalSpace) {
+                                self.model.pictureManager.removeFromPileByName(image.name, pileEntityId: image.space.id)
+                            }
+                            else if originalSpace == .cameraRoll {
+                                self.model.transferImageToInSpace(name: image.name)
+                            }
+                            
                             self.removeImage(image.name)
                             
                             added = false

@@ -31,116 +31,121 @@ extension ViewModel {
         }
     }
     
-    
-    // MARK: - Fetch Photos
-    func getCameraRoll() -> [NamedImage] {
-        var cameraRollImages: [NamedImage] = []
-        print("Pulling from \(self.photos.count)")
-        self.photosQueue.sync {
-            for image in self.photos {
-                if image.space == ImageSpace.cameraRoll {
-                    cameraRollImages.append(image)
-                }
-            }
-        }
-        print("Returning a total of \(cameraRollImages)")
-        
-        return cameraRollImages
+    func transferImageToInSpace(name: String) {
+        let index = self.cameraRoll.firstIndex{ $0.name == name }
+        guard let index = index else{ return }
+        let image = self.cameraRoll.remove(at: index)
+        self.inSpace.append(image)
     }
     
-
-    
-    func fetchPhotos() {
-        if self.DEBUG_MODE {
-            var testImages: [NamedImage] = []
-            for _ in 0..<self.fetchSize {
-                testImages.append(
-                    NamedImage(image: createSolidColorImage(size: CGSize(width: 100, height: 100)), quality: .high, space: .cameraRoll)
-                )
-            }
-            self.photos += testImages
-        }
-        
-        
-        // Step 1: get the assets form our photo libary, reverse sorted by creation date.
+    func cacheFetchResults() {
         guard let cameraRollAlbum = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil).firstObject else { return }
-
-        //Thing to Optimize: only gettign assets we haven't seen
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         let fetchResult = PHAsset.fetchAssets(in: cameraRollAlbum, options: fetchOptions)
-        print("Assets requested \(fetchResult.count)")
         
-//      Select a fetchSize from all of the assets, then increment offset by the amount we are about to request for
-        let start = self.fetchOffset
-        let end = start + self.fetchSize
-        let count = fetchResult.count
-        if start >= count {
-            // Handle case where requested page is out of bounds
+        self.unloadedAssetQueue = []
+        fetchResult.enumerateObjects { (asset, _, _) in
+            self.unloadedAssetQueue.append(asset)
+        }
+        print("Unloaded asset queue is now \(self.unloadedAssetQueue.count)")
+        
+    }
+    
+    func generateNamedImages(until end: Int) {
+        if end > unloadedAssetQueue.count { return }
+        let numImages = min(end,unloadedAssetQueue.count)
+        print("Adding a total of \(numImages) elements to camera roll")
+        for _ in 0..<numImages {
+            let asset = unloadedAssetQueue.removeFirst()
+            self.cameraRoll.append(NamedImage(
+                asset: asset,
+                image: nil,
+                quality: .empty,
+                space: .cameraRoll))
+        }
+    }
+    
+//  The algorithm is as follows:
+    // Step 1) render low res images for current page if it doens't exist
+    // Step 2) render low res images for the page after
+    // Step 3) render high res images for the current page
+    // Step 4) render high res pictures for the page before and after
+    // Step 5) empty photos from 4 pages behind or 4 pages in front
+    func getCameraRollPage(start: Int, initialEnd: Int) {
+        if start < 0 || start > initialEnd {
             return
         }
         
-        // Slice the fetchResult to get only the assets for the current page
-        var assetsToFetch: [PHAsset] = []
-        fetchResult.enumerateObjects { asset, index, stop in
-            if index >= start && index < min(end, count) {
-               assetsToFetch.append(asset)
-            }
+        let pageSize = initialEnd-start
+        if initialEnd+pageSize > self.cameraRoll.count { //Want to generate one extra page of images if needed
+            generateNamedImages(until: initialEnd+pageSize)
         }
-        self.fetchOffset += assetsToFetch.count
         
-        print("Fetching \(assetsToFetch.count) photos at offset \(self.fetchOffset) with status \(PHPhotoLibrary.authorizationStatus())" )
-
-        // Convert the sliced PHAssets to UIImages
-        convertAssetsToUIImages(assets: assetsToFetch) {
-            // TODO: Final completion, should only get called once
+        var end = initialEnd
+        if self.cameraRoll.count < end {
+            end = self.cameraRoll.count
         }
-       
+        
+        // Low quality render first pass
+        print("End case is \(end+pageSize) but cam count is \(self.cameraRoll.count)")
+        renderImageSet(images: self.cameraRoll[start..<end], quality: .low)
+        renderImageSet(images: self.cameraRoll[end..<end+pageSize], quality: .low)
+        
+        // High quality render second pass
+        renderImageSet(images: self.cameraRoll[start..<end], quality: .high)
+        renderImageSet(images: self.cameraRoll[end..<end+pageSize], quality: .high)
+        
+        //Remove all images of before 4 pages or after 4 pages
+        let removalLowerBound = start-(pageSize*4)
+        let removalUpperBound = end+(pageSize*4)
+        if removalLowerBound > 0 {
+            renderImageSet(images: self.cameraRoll[0..<removalLowerBound], quality: .empty)
+        }
+        if removalUpperBound < self.cameraRoll.count{
+            renderImageSet(images: self.cameraRoll[removalUpperBound..<self.cameraRoll.count], quality: .empty)
+        }
    }
     
-    func convertAssetsToUIImages(assets: [PHAsset], completion: @escaping () -> Void) {
-        var requestCount = 0 // Keep track of the number of completed requests
+    
+    
+    func renderImageSet(images: ArraySlice<NamedImage>, quality: ImageQuality) {
+        if quality == .empty { // Empty out photos from previous pages, but ONLY if they are in the camera roll space
+            for img in images {
+                if img.space == .cameraRoll {
+                    img.imageQuality = .empty
+                    img.uiImage = nil
+                }
+            }
+            return
+        }
+        
+        let manager = PHImageManager.default()
         let options = PHImageRequestOptions()
         options.isSynchronous = false // Set to false to allow asynchronous requests
         options.isNetworkAccessAllowed = true
-        let manager = PHImageManager.default()
-
-        for asset in assets {
-            options.deliveryMode = .fastFormat
-            manager.requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFill, options: options) { (result, info) in
+        
+        options.deliveryMode = .fastFormat
+        if quality == .high {
+            options.deliveryMode = .highQualityFormat
+        }
+        
+        for namedImage in images {
+            if namedImage.imageQuality.rawValue >= quality.rawValue { //If the photo is already loaded at the desired quality or better, don't make a call to load to write it
+                continue
+            }
+            manager.requestImage(for: namedImage.asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFill, options: options) { (result, info) in
                 self.photosQueue.async { //protects serial writing to the images array
-                    if let image = result {
-                        let image = NamedImage(image: image, quality: .low, space: .cameraRoll)
+                    if let uiImage = result {
                         DispatchQueue.main.sync { //Should only modify photos in main thread
-                            self.photos.append(image)
-                        }
-                        self.requestHighRes(for: asset, to: image, manager: manager, options: options)
-                    }
-                    requestCount += 1
-                    if requestCount == assets.count {
-                        DispatchQueue.main.async {
-                            completion() // Call completion handler once all requests are completed
+                            namedImage.imageQuality = quality
+                            namedImage.uiImage = uiImage
                         }
                     }
                 }
             }
         }
-    }
-       
-    func requestHighRes(for asset: PHAsset, to namedImage: NamedImage, manager: PHImageManager, options: PHImageRequestOptions) {
-        options.deliveryMode = .highQualityFormat
-        manager.requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFill, options: options) { (highQualityResult, _) in
-            if let highQualityImage = highQualityResult {
-                self.photosQueue.async {
-                    DispatchQueue.main.sync { // want to only modify in main threat, need it to block till end of photosQueue async so modifications only happen once per thread
-                        if let index = self.photos.firstIndex(where: { $0.name == namedImage.name }) {
-                            self.photos[index].image = highQualityImage
-                            self.photos[index].imageQuality = .high
-                        }
-                    }
-                }
-            }
-        }
+        
     }
 }
 

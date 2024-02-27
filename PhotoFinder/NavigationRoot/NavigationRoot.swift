@@ -33,9 +33,17 @@ struct NavigationRoot: View {
             NavigationStack(path: $model.navigationPath) {
                 StarterView()
                 .navigationDestination(for: Module.self) { module in
-                    PileWindowView(module: module)
-                        .navigationTitle(module.name)
-                        .environmentObject(model)
+                    if module == .cameraRoll {
+                        CameraRollWindowView(module: module)
+                            .navigationTitle(module.name)
+                            .environmentObject(model)
+                    } else {
+                        PileWindowView(module: module)
+                            .navigationTitle(module.name)
+                            .environmentObject(model)
+                    }
+                    
+                        
                 }.onAppear {
                     model.navigationPath = []
                     Task {
