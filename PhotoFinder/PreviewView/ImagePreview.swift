@@ -50,12 +50,18 @@ struct ImagePreview: View {
                         SimultaneousGesture(
                         DragGesture(minimumDistance: 0).onChanged { _ in
                             self.isSelecting = true
+                            if self.image.imageQuality == .low {
+
+                            }
                         }.onEnded { _ in
                             self.isSelecting = false
                         },
                         
                         
                         DragGesture(minimumDistance: 15).onChanged { value in
+                            if self.image.imageQuality == .low {
+                                return
+                            }
                             
                             self.isSelecting = false
                             
@@ -117,26 +123,3 @@ struct ImagePreview: View {
         }
     }
 }
-
-
-
-//                                            .onTapGesture {
-//                                                print(proxy.frame(in: .local))
-//                                                print(proxy.frame(in: .named(Module.active.name)))
-//                                                print(proxy.size)
-//                                                if let transform = proxy.transform(in: .named(Module.active.name)) {
-//                                                    print("Converted coords to \(transform.scale) \(transform.translation) \(transform.rotation)")
-//
-//                                                    let phys_trans = physicalMetrics.convert(transform.translation, to: .meters)
-//                                                    let translation = SIMD3<Float>(
-//                                                        Float(phys_trans.x / transform.scale.width),
-//                                                        Float(phys_trans.y / (-1*transform.scale.height)),
-//                                                        Float(phys_trans.z / transform.scale.depth))
-//
-//                                                    model.pictureManager.addPicture(
-//                                                        from: model.photos[index],
-//                                                        pos: translation,
-//                                                        rot: transform.rotation != nil ? simd_quatf(transform.rotation!) : nil
-//                                                    )
-//                                                }
-//                                            }

@@ -21,6 +21,7 @@ class PictureManager {
     var pictureEntityNameSet: Set<String> = []
     
     var pileEntities: [PileEntity] = []
+    let trashPileEntity = TrashPileEntity()
     
     var selectedPile: PileEntity?
     
@@ -29,6 +30,9 @@ class PictureManager {
     @MainActor
     init() {
         rootEntity.addChild(deviceLocation)
+        rootEntity.addChild(trashPileEntity)
+        pileEntities.append(trashPileEntity)
+        trashPileEntity.position = SIMD3<Float>(-1.5,0.5,-2)
         deviceLocation.addChild(raycastOrigin)
         deviceManager = DeviceManager()
     }
@@ -66,9 +70,6 @@ class PictureManager {
         // Calculate yaw rotation (around Y-axis) to face the device horizontally
         let yawRotation = simd_quatf(from: globalForward, to: horizontalDirection)
         
-        // Apply yaw rotation to the global up vector to get the entity's local up vector
-        let localUp = yawRotation.act(SIMD3<Float>(0, 1, 0))
-        
         // Calculate pitch rotation (around the entity's local X-axis) to tilt up or down towards the device's elevation
         // First, transform global forward vector by yaw rotation to align it with horizontal direction
         let alignedForward = yawRotation.act(globalForward)
@@ -84,6 +85,24 @@ class PictureManager {
         return combinedRotation
     }
     
+    func rotationToFaceDeviceYAxisOnly(newPos: SIMD3<Float>, curQuat: simd_quatf) -> simd_quatf {
+        let devPos = deviceManager.getDeviceLocation()
+        
+        // Calculate direction vector from the entity to the device
+        let direction = normalize(devPos - newPos)
+        
+        // Calculate horizontal component of the direction (for yaw)
+        let horizontalDirection = normalize(SIMD3<Float>(direction.x, 0, direction.z))
+        
+        // Assuming the entity's forward vector is the negative Z-axis in its local space
+        let globalForward = SIMD3<Float>(0, 0, 1) // Ensure forward is correctly defined as negative Z-axis
+        
+        // Calculate yaw rotation (around Y-axis) to face the device horizontally
+        let yawRotation = simd_quatf(from: globalForward, to: horizontalDirection)
+        
+        // Since we only want the yaw rotation, we return it directly without combining with a pitch rotation
+        return yawRotation
+    }
 
     
     func findPictureEntity(name: String) -> PictureEntity? {
@@ -99,7 +118,9 @@ class PictureManager {
     }
     
     func updateLoc(entity: CustomEntity, newPos: SIMD3<Float>) {
-        let rotationQuaternion = rotationToFaceDevice(newPos: newPos, curQuat: entity.orientation)
+        let rotationQuaternion = !(entity is TrashPileEntity) ?
+        rotationToFaceDevice(newPos: newPos, curQuat: entity.orientation) :
+        rotationToFaceDeviceYAxisOnly(newPos: newPos, curQuat: entity.orientation)
         
         entity.move(to: Transform(
             scale: entity.scale,
@@ -119,6 +140,7 @@ class PictureManager {
     func checkPictureCollisions(pictureEntity: PictureEntity) {
         
         for pile in pileEntities {
+            print("CHECKING PILE ENTITY: \(pileEntities)")
             if pile.isColliding(with: pictureEntity) {
                 addPictureToPile(pictureEntity: pictureEntity, pileEntity: pile)
                 return

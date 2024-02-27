@@ -13,7 +13,7 @@ import SwiftUI
 class PileEntity: CustomEntity {
     var pileName: String = "Untitled"
     var pictureEntities: [PictureEntity] = []
-    private var textEntity: ModelEntity?
+    var textEntity: ModelEntity?
     var planeSize: SIMD2<Float>
     var pileId: String
     /// Initializes a new PileEntity.
@@ -22,21 +22,32 @@ class PileEntity: CustomEntity {
     ///   - pictureEntities: The list of PictureEntity instances to be stacked.
     init(pictureEntities: [PictureEntity]) {
         self.pileId = UUID().uuidString
-        self.planeSize = pictureEntities[0].planeSize
+        
+        if pictureEntities.count > 0 {
+            self.planeSize = pictureEntities[0].planeSize
+            
+            
+            
+            
+            
+        } else {
+            self.planeSize = [0.25, 0.25]
+        }
+    
         super.init()
-        let refPic = pictureEntities[pictureEntities.count / 2]
-        self.position = refPic.position
-        self.scale = refPic.scale
-        self.orientation = refPic.orientation
         
-        
-
+        if pictureEntities.count > 0 {
+            let refPic = pictureEntities[pictureEntities.count / 2]
+            self.position = refPic.position
+            self.scale = refPic.scale
+            self.orientation = refPic.orientation
+        }
+    
 //        addOriginMarker()
         
         // Add and stack the picture entities
         addAndStackPictureEntities(pictureEntities)
         addTextLabel()
-        print("MAKING PILE at pos \(self.position)")
         
     }
     
@@ -73,7 +84,7 @@ class PileEntity: CustomEntity {
         }
     }
     
-    private func insertPic(_ entity: PictureEntity, offset: Float) {
+    func insertPic(_ entity: PictureEntity, offset: Float) {
         entity.image.space = .pile(pileId: self.pileId)
         entity.position = SIMD3<Float>(0,0,offset)
         // Generate a random rotation around the Z-axis
@@ -94,6 +105,7 @@ class PileEntity: CustomEntity {
         self.addChild(entity)
         pictureEntities.append(entity)
     }
+    
     
     func removeByName(_ name: String) -> PictureEntity? {
         // Remove the entity from the pictureEntities array
@@ -119,43 +131,30 @@ class PileEntity: CustomEntity {
         // If the entity's space property is set based on being in this pile, you may want to reset it as well
         // entity.image.space = .someOtherSpace // Adjust this based on your app's logic
     }
-
- 
-}
-
-
-extension PileEntity {
     
-    /// Checks for a collision between the pile's bounding box and a given PictureEntity.
+    func calculateBoundingBox() -> (min: SIMD3<Float>, max: SIMD3<Float>) {
+        let reductionFactor = Float(0.5)
+        let halfPlaneSize = (self.planeSize.x / 2)*reductionFactor //Come back to this later, fine cause assumed square currently
+        
+        var minCorner = SIMD3<Float>(self.position.x - halfPlaneSize, self.position.y - halfPlaneSize, self.position.z - halfPlaneSize)
+        var maxCorner = SIMD3<Float>(self.position.x + halfPlaneSize, self.position.y + halfPlaneSize, self.position.z + halfPlaneSize)
+        
+        return (min: minCorner, max: maxCorner)
+    }
+    
     func isColliding(with entity: PictureEntity) -> Bool {
         let pileBoundingBox = calculateBoundingBox()
         let entityBoundingBox = entity.calculate3DBoundingBox()
         return doBoxesIntersect(pileBoundingBox, entityBoundingBox)
     }
-    
-    /// Calculates the bounding box that encompasses all picture entities within the pile.
-    func calculateBoundingBox() -> (min: SIMD3<Float>, max: SIMD3<Float>) {
-        let halfPlaneSize = self.pictureEntities[0].planeSize.x / 2 //Come back to this later, fine cause assumed square currently
-        
-        var minCorner = SIMD3<Float>(self.position.x - halfPlaneSize, self.position.y - halfPlaneSize, self.position.z - halfPlaneSize)
-        var maxCorner = SIMD3<Float>(self.position.x + halfPlaneSize, self.position.y + halfPlaneSize, self.position.z + halfPlaneSize)
-
-        
-        // Adjust the bounding box according to the PileEntity's position if necessary.
-        // This step is needed if you're considering the pile's position as part of the bounding box.
-        // minCorner += self.position
-        // maxCorner +=  self.position
-        
-        return (min: minCorner, max: maxCorner)
-    }
-    
+ 
 }
 
 
 extension PileEntity {
     func textGen(textString: String) -> ModelEntity {
         
-        let materialVar = SimpleMaterial(color: .white, roughness: 0, isMetallic: false)
+        let materialVar = UnlitMaterial(color: .white)
         
         let depthVar: Float = 0.001
         let fontVar = UIFont.systemFont(ofSize: 0.05)
@@ -187,6 +186,7 @@ extension PileEntity {
         let xOffset = Float(-1*(0.05 * Double(pileName.count) / 2))
         let planeOffset = Float((planeSize.y*1.1)/2)
         let zOffset = Float(highestPoint + 0.05)
+        
         textEntity.position = SIMD3<Float>(xOffset, planeOffset, zOffset) // Adjust the Z offset as necessary
         
         // Add the text entity as a child to the PileEntity

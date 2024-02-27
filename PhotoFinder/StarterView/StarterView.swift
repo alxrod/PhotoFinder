@@ -39,12 +39,12 @@ struct StarterView: View {
                 ForEach(instructions, id: \.self) { item in
                     HStack {
                         Text("•") // Bullet symbol
-                            .font(.system(size: 22)) // Adjust the size of the bullet symbol as needed
+                            .font(.system(size: 26)) // Adjust the size of the bullet symbol as needed
                         Text(item)
-                            .font(.system(size: 18)) // Adjust text size as needed
+                            .font(.system(size: 22)) // Adjust text size as needed
                     }.padding(.vertical, 5)
                 }
-            }.frame(maxWidth: 300)
+            }.frame(maxWidth: 400)
                 .padding()
             
             Spacer()

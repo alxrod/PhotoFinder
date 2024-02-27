@@ -50,31 +50,36 @@ struct PileWindowView: View {
                     .padding(.trailing, 30)
                 }
             }
+            
             PreviewView(images: images, cameraRollMode: module == .cameraRoll) { name in
                 let idx = images.firstIndex { $0.name == name }
                 guard let idx = idx else {return}
                 images.remove(at: idx)
             } requestMorePhotos: {
-                if module == .cameraRoll {
-                    images += model.getNextCameraRollPage()
+                Task {
+                    model.fetchPhotos()
                 }
             }.environmentObject(model)
+            
         }
         .onChange(of: module) { _, path in
             editableName = module.name
-            if Module.isPile(module) {
-                images = model.pictureManager.getPileIdPics(module.id)
-            } else {
+            Task {
                 images = model.getCameraRoll()
             }
-            print("COMPLETED HERE: \(images)")
         }
         .onAppear() {
-            if Module.isPile(module) {
-                images = model.pictureManager.getPileIdPics(module.id)
-            } else {
+            Task {
                 images = model.getCameraRoll()
             }
+        }
+        .onReceive(model.$photos) { updatedPhotos in
+            let newPhotos = updatedPhotos.filter { updatedPhoto in
+                !self.images.contains { existingImage in
+                    existingImage.name == updatedPhoto.name
+                }
+            }
+            self.images.append(contentsOf: newPhotos.filter { $0.space == .cameraRoll })
         }
         .padding(.horizontal, 50)
         .navigationTitle(module == Module.cameraRoll ? "Stop Sorting" : "Camera Roll")

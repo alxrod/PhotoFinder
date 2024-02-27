@@ -103,12 +103,15 @@ extension PictureEntity {
     
 
     func calculate3DBoundingBox() -> (min: SIMD3<Float>, max: SIMD3<Float>) {
+        
+        let reductionFactor = Float(0.5) // this is a patch for now
+        
         // Assume the entity's position is the center of the bounding box.
         let center = self.position
         
         // Calculate half extents based on the entity's plane size and the specified depth.
-        let halfWidth = self.planeEntity?.model?.mesh.bounds.extents.x ?? 0 / 2
-        let halfHeight = self.planeEntity?.model?.mesh.bounds.extents.y ?? 0 / 2
+        let halfWidth = (self.planeEntity?.model?.mesh.bounds.extents.x ?? 0 / 2) * reductionFactor
+        let halfHeight = (self.planeEntity?.model?.mesh.bounds.extents.y ?? 0 / 2) * reductionFactor
         let halfDepth = halfWidth / 2
         
         // Calculate the min and max corners of the bounding box.
@@ -123,7 +126,6 @@ extension PictureEntity {
 extension PictureEntity {
 
     func highlight() {
-        guard let planeEntity = planeEntity else { return }
         
         let borderThickness = Float(0.015)
         

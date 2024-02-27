@@ -23,11 +23,10 @@ struct PreviewView: View {
     public var requestMorePhotos: () -> ()
     
     
-    @State private var pageLimit = 30
     @State private var currentPage = 0
     
     private var maxPage: Int {
-        images.count / pageLimit + (images.count % pageLimit > 0 ? 1 : 0) - 1
+        images.count / model.fetchSize + (images.count % model.fetchSize > 0 ? 1 : 0) - 1
     }
     
     var body: some View {
@@ -36,7 +35,6 @@ struct PreviewView: View {
 //                ScrollView {
                     let columns = Array(repeating: GridItem(.flexible()), count: Int(geometry.size.width / CGFloat(spacing + imageSize)))
                 
-                    
 
                     LazyVGrid(columns: columns) {
                         ForEach(currentPageImages.indices, id: \.self) { index in
@@ -54,9 +52,11 @@ struct PreviewView: View {
                         
                         let newLim = columnsCount*rowsCount
                         if newLim > images.count && cameraRollMode {
-                            requestMorePhotos()
+                            Task {
+                                requestMorePhotos()
+                            }
                         }
-                        pageLimit = newLim
+                        model.fetchSize = newLim
                     }
 //                }
             }
@@ -76,8 +76,13 @@ struct PreviewView: View {
                 
                 Button("Next") {
                     if currentPage < maxPage || cameraRollMode { currentPage += 1 }
-                    if images.count - (currentPage*pageLimit) <= pageLimit {
-                        requestMorePhotos()
+                    
+                    print("clicked next page lookng at photos from \(currentPage*model.fetchSize) to \((currentPage+1)*model.fetchSize)")
+                    if images.count - ((currentPage+2)*model.fetchSize) <= model.fetchSize {
+                        Task {
+                            print("Requesting a new set of photos")
+                            requestMorePhotos()
+                        }
                     }
                 }
                 .disabled(currentPage >= maxPage && !cameraRollMode)
@@ -87,8 +92,11 @@ struct PreviewView: View {
     }
     
     private var currentPageImages: [NamedImage] {
-        let startIndex = currentPage * pageLimit
-        let endIndex = min(startIndex + pageLimit, images.count)
+        let startIndex = currentPage * model.fetchSize
+        let endIndex = min(startIndex + model.fetchSize, images.count)
+        if startIndex > endIndex {
+            return []
+        }
         return Array(images[startIndex..<endIndex])
     }
 }

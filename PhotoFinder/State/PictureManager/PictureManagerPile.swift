@@ -55,7 +55,7 @@ extension PictureManager {
         
         let picEntity = pileEntity.removeByName(picEntityName)
         
-        if pileEntity.pictureEntities.isEmpty {
+        if pileEntity.pictureEntities.isEmpty && !(pileEntity is TrashPileEntity) {
             pileEntity.removeFromParent()
             self.pileEntities.remove(at: idx)
         }
@@ -86,3 +86,5 @@ extension PictureManager {
         return images
     }
 }
+
+
